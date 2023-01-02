@@ -2,16 +2,24 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 ## Getting Started
 
-First install dependecies:
 
+- First, install `npm` server and `node` version 18
 ```bash
-yarn
+$ sudo apt install npm
+```
+For Debian/Ubuntu checkout [manual-installation-of-nodejs](https://github.com/nodesource/distributions#manual-installation)
+
+- After, install dependencies
+```bash
+$ npm install
 ```
 
-Run the development server:
+- Run the development server:
 
 ```bash
-yarn dev
+$ npm run dev
+# or
+$ yarn dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.

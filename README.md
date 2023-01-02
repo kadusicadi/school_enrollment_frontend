@@ -2,6 +2,7 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 ## Getting Started
 
+
 - First, install `npm` server and `node` version 18
 ```bash
 $ sudo apt install npm

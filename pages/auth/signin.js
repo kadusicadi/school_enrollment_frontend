@@ -1,16 +1,27 @@
-import React, {useState } from "react";
+import React, { useState } from "react";
 import Head from "next/head";
 import Link from 'next/link'
-
 import { useForm } from 'react-hook-form';
+import { signIn } from "next-auth/react";
+import { useSearchParams } from "next/navigation"; 
 
-const Login = () => {
+const Signin = () => {
+    const searchParams = useSearchParams();     
+    const message = searchParams.get("message");
+
     const { register, handleSubmit, formState: { errors } } = useForm();
-
-    const onSubmit = data => {
-        console.log(data);
+    const onSubmit = async (data) => {
+        try {
+            const res = await signIn("credentials", {
+                email: data.email,
+                password: data.password,
+                redirect: true,
+                callbackUrl: "/",
+            });
+        } catch (e) {
+            console.log(e)
+        }
     };
-
 
     return (
         <div>
@@ -18,7 +29,9 @@ const Login = () => {
                 <title>Škola</title>
             </Head>
             <div className="container mx-auto px-5 global w-full h-screen flex justify-center items-center">
+
                 <div className="w-[350px] h-[550px] p-5 border flex flex-col justify-evenly">
+                    {message && <p className="text-red-700 bg-red-100 py-2 px-5 rounded-md text-center">{message}</p>}
                     <h1 className="text-xl font-semibold text-center">Srednja Škola</h1>
                     <form onSubmit={handleSubmit(onSubmit)}>
                         <label htmlFor="email" className="block text-sm font-bold mb-2 mt-4">Email</label>
@@ -39,17 +52,11 @@ const Login = () => {
                             />
                         </div>
                         {errors.password && <p className="error">{errors.password?.message}</p>}
-                        <div className="w-full py-2 mt-1 cursor-pointer  text-right">
-                            <Link href="/auth/forgot-password">
-                                <span className="text-blue-500 underline text-sm ">Zaboravili ste lozinku?</span>
-                            </Link>
-                        </div>
                         <input type="submit" value="Prijava" className="border rounded w-full py-2 px-3 mt-4 cursor-pointer" />
                     </form>
-                    <div className="w-full py-2 mt-3 text-s">
-                        Ako ne posjedujete korisnički račun molimo vas da se
-                        <Link href="/auth/signup">
-                            <span className="underline text-blue-500 cursor-pointer"> registrirate.</span>
+                    <div className="w-full py-2 mt-1 cursor-pointer  text-right">
+                        <Link href="/auth/forgot-password">
+                            <span className="text-blue-500 underline text-sm ">Zaboravili ste lozinku?</span>
                         </Link>
                     </div>
                 </div>
@@ -58,4 +65,4 @@ const Login = () => {
     );
 };
 
-export default Login;
+export default Signin;

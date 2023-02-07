@@ -15,12 +15,3 @@ function MyApp({
   )
 }
 export default MyApp
-
-// export default function App({ Component, pageProps }) {
-//   return (
-//     <>
-//       <Component {...pageProps} />
-//       <ToastContainer />
-//     </>
-//   )
-// }

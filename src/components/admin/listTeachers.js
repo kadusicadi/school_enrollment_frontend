@@ -36,7 +36,7 @@ const ListTeachers = () => {
                         <dl className="sm:divide-y sm:divide-gray-200">
                             {teachers.map((item, index) => {
                                 return (
-                                    <div key={item.id} className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5 sm:px-6">
+                                    <div key={index} className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5 sm:px-6">
                                         <dt className="text-sm font-medium text-gray-500 first-letter:capitalize">{index + 1}. {item.first_name} {item.last_name}</dt>
                                         <dd className="mt-1 text-sm text-gray-900 sm:col-span-1 sm:mt-0">{item.email}</dd>
                                         <dd className="mt-1 text-sm text-gray-900 sm:col-span-1 sm:mt-0">{item.school_id.school_name}</dd>

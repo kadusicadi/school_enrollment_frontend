@@ -1,11 +1,70 @@
 import { useForm } from 'react-hook-form';
+import { useSession } from "next-auth/react";
+import { useEffect, useState } from 'react';
 
 const NewTeachers = () => {
+    const { status, data } = useSession();
+    const [school, setSchool] = useState(null)
+    const [courses, setCourses] = useState(null)
 
-    const { register, handleSubmit, formState: { errors } } = useForm();
+    const { register, handleSubmit, setValue, formState: { errors } } = useForm();
 
-    const onSubmit = data => {
-        console.log(data);
+    async function getSchool(dataInfo) {
+        try {
+            const resp = await fetch('http://51.15.114.199:3534/api/school-list/' + dataInfo.user.school_id, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${dataInfo.user.token}`
+                }
+            })
+            const schoolData = await resp.json();
+            setSchool(schoolData)
+            setValue("school_id", schoolData.school_name)
+
+            const respCourses = await fetch('http://51.15.114.199:3534/api/school-list/' + dataInfo.user.school_id + '/courses/', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${dataInfo.user.token}`
+                }
+            })
+            const coursesData = await respCourses.json();
+            setCourses(coursesData.results)
+        } catch (e) {
+            console.log(e)
+        }
+    }
+
+    useEffect(() => {
+        if (data) {
+            getSchool(data)
+        }
+    }, [data])
+
+    const onSubmit = async (dataVal) => {
+        try {
+            const storeData = {
+                password: dataVal.password,
+                is_superuser: false,
+                first_name: dataVal.first_name,
+                last_name: dataVal.last_name,
+                is_staff: false,
+                email: dataVal.email,
+                school_id: dataVal.school_id,
+                course_code: dataVal.course_id
+            }
+
+            const store = await fetch('http://51.15.114.199:3534/api/teacher-create/', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${data.user.token}`
+                },
+                body: JSON.stringify(storeData)
+            })
+        } catch (e) {
+            console.log(e)
+        }
+
+
     };
 
     return (
@@ -47,6 +106,43 @@ const NewTeachers = () => {
                         />
                     </div>
                     {errors.password && <p className="text-red-500 italic">{errors.password?.message}</p>}
+                    {school && (
+                        <>
+                            <label htmlFor="shool" className="block text-sm font-bold mb-2 mt-4">Škola</label>
+                            <div className="relative">
+                                <input
+                                    className="border rounded w-full py-2 px-3"
+                                    type='text'
+                                    disabled
+                                    value={school.school_name}
+                                    {...register('school_id')}
+                                />
+                            </div>
+                        </>
+                    )}
+                    {courses && (
+                        <>
+                            <label htmlFor="courses" className="block text-sm font-bold mb-2 mt-4">Smjer</label>
+                            <div className="relative">
+                                <select
+                                    className="border rounded w-full py-2 px-3"
+                                    {...register('course_id')}
+                                >
+                                    {courses.map(item => {
+                                        return (
+                                            <option
+                                                key={item._course_code}
+                                                value={item._course_code}>
+                                                {item.course_name}
+                                            </option>
+                                        )
+                                    })}
+                                </select>
+                            </div>
+                        </>
+                    )}
+
+
                     <input type="submit" value="Prijava" className="border rounded w-full py-2 px-3 mt-4 cursor-pointer" />
                 </form>
             </div>

@@ -7,7 +7,7 @@ export default withAuth(
       return NextResponse.rewrite(
         new URL("/auth/signin?message=Nemate dozvolu za pristup admin stranici!", req.url)
       );
-    if (req.nextUrl.pathname.startsWith("/user") && req.nextauth.token?.role !== "user")
+    if (req.nextUrl.pathname.startsWith("/user") && (req.nextauth.token?.role !== "user" && req.nextauth.token?.role !== "admin"))
       return NextResponse.rewrite(
         new URL("/auth/signin?message=Nemate dozvolu za pristup user stranici!", req.url)
       );

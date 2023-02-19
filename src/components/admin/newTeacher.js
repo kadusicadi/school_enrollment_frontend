@@ -2,7 +2,7 @@ import { useForm } from 'react-hook-form';
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from 'react';
 
-const NewTeachers = () => {
+const NewTeachers = ({setSelectedPage}) => {
     const { status, data } = useSession();
     const [school, setSchool] = useState(null)
     const [courses, setCourses] = useState(null)
@@ -18,8 +18,9 @@ const NewTeachers = () => {
                 }
             })
             const schoolData = await resp.json();
+            console.log("🚀 ~ file: newTeacher.js:21 ~ getSchool ~ schoolData", schoolData)
             setSchool(schoolData)
-            setValue("school_id", schoolData.school_name)
+            setValue("school_id", schoolData.id)
 
             const respCourses = await fetch('http://51.15.114.199:3534/api/school-list/' + dataInfo.user.school_id + '/courses/', {
                 method: 'GET',
@@ -56,15 +57,15 @@ const NewTeachers = () => {
             const store = await fetch('http://51.15.114.199:3534/api/teacher-create/', {
                 method: 'POST',
                 headers: {
-                    'Authorization': `Bearer ${data.user.token}`
+                    'Authorization': `Bearer ${data.user.token}`,
+                    'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(storeData)
             })
+            setSelectedPage("listTeachers")
         } catch (e) {
             console.log(e)
         }
-
-
     };
 
     return (

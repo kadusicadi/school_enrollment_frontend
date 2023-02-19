@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 
 const ListTeachers = () => {
     const { status, data } = useSession();
+    console.log("🚀 ~ file: listTeachers.js:6 ~ ListTeachers ~ data", data)
     const [teachers, setTeachers] = useState([])
 
     async function getTeachers(dataInfo) {

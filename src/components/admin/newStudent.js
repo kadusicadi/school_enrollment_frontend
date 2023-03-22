@@ -2,7 +2,7 @@ import { useForm } from 'react-hook-form';
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from 'react';
 
-const NewTeachers = ({ setSelectedPage }) => {
+const NewStudent = ({ setSelectedPage }) => {
     const { status, data } = useSession();
     const [school, setSchool] = useState(null)
     const [courses, setCourses] = useState(null)
@@ -46,13 +46,13 @@ const NewTeachers = ({ setSelectedPage }) => {
         }
     }
 
-    // useEffect(() => {
-    //     register('course_id')
-    // }, [])
+    useEffect(() => {
+        register('course_id')
+    }, [])
 
-    // useEffect(() => {
-    //     setValue('course_id', selectedOptions)
-    // }, [selectedOptions])
+    useEffect(() => {
+        setValue('course_id', selectedOptions)
+    }, [selectedOptions])
 
     useEffect(() => {
         if (data) {
@@ -72,14 +72,16 @@ const NewTeachers = ({ setSelectedPage }) => {
                 school_id: dataVal.school_id,
                 course_code: dataVal.course_id
             }
-            const store = await fetch('http://51.15.114.199:3534/api/teacher-create/', {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${data.user.token}`,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(storeData)
-            })
+            console.log("🚀 ~ file: newTeacher.js:75 ~ onSubmit ~ storeData:", storeData)
+
+            // const store = await fetch('http://51.15.114.199:3534/api/teacher-create/', {
+            //     method: 'POST',
+            //     headers: {
+            //         'Authorization': `Bearer ${data.user.token}`,
+            //         'Content-Type': 'application/json'
+            //     },
+            //     body: JSON.stringify(storeData)
+            // })
             setSelectedPage("listTeachers")
         } catch (e) {
             console.log(e)
@@ -89,7 +91,7 @@ const NewTeachers = ({ setSelectedPage }) => {
     return (
         <div>
             <div className="flex flex-col">
-                <h1 className="text-2xl font-semibold mb-3">Registracija novog nastavnika</h1>
+                <h1 className="text-2xl font-semibold mb-3">Dodaj novog učenika</h1>
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <label htmlFor="first_name" className="block text-sm font-bold mb-2 mt-4">Ime</label>
                     <input
@@ -142,8 +144,8 @@ const NewTeachers = ({ setSelectedPage }) => {
                     {courses && (
                         <>
                             <label htmlFor="courses" className="block text-sm font-bold mb-2 mt-4">Smjer</label>
-                            <div className="relative">
-                                <select
+                            {/* <div className="relative">
+                                <select multiple
                                     className="border rounded w-full py-2 px-3"
                                     {...register('course_id')}
                                 >
@@ -157,9 +159,9 @@ const NewTeachers = ({ setSelectedPage }) => {
                                         )
                                     })}
                                 </select>
-                            </div>
+                            </div> */}
 
-                            {/* <div className="relative">
+                            <div className="relative">
                                 <div className="flex items-center bg-gray-100 rounded-md px-3 py-2">
                                     {selectedOptions.length === 0 && (
                                         <div className="text-gray-500">Select options</div>
@@ -193,7 +195,7 @@ const NewTeachers = ({ setSelectedPage }) => {
                                         </div>
                                     ))}
                                 </div>
-                            </div> */}
+                            </div>
                         </>
                     )}
 
@@ -205,4 +207,4 @@ const NewTeachers = ({ setSelectedPage }) => {
     )
 };
 
-export default NewTeachers;
+export default NewStudent;

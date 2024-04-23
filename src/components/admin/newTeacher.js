@@ -30,7 +30,7 @@ const NewTeachers = ({setSelectedPage}) => {
                 }
             })
             const coursesData = await respCourses.json();
-            setCourses(coursesData.results)
+            setCourses(coursesData)
         } catch (e) {
             console.log(e)
         }

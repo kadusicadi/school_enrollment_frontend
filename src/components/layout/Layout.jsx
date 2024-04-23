@@ -47,22 +47,22 @@ export default function Layout({ children }) {
                                             {/* Display navigation links based on the teacher status */}
                                             {status === "authenticated" && (
                                                 <>
-                                            <Link href="/" className={classNames('text-gray-300 hover:bg-gray-700 hover:text-white', 'px-3 py-2 rounded-md text-sm font-medium')}>
-                                                Početna
-                                            </Link>
-                                            {/* If the teacher is not an admin it displays 'Nastavnik opcije'*/}
-                                            {!isAdmin && (
-                                                <Link href="/user" className={classNames('text-gray-300 hover:bg-gray-700 hover:text-white', 'px-3 py-2 rounded-md text-sm font-medium')}>
-                                                    Nastavnik opcije
-                                                </Link>
-                                            )}
-                                            {/* If the teacher is an admin it displays 'Admin opcije' */}
-                                            {isAdmin && (
-                                                <Link href="/admin" className={classNames('text-gray-300 hover:bg-gray-700 hover:text-white', 'px-3 py-2 rounded-md text-sm font-medium')}>
-                                                    Admin opcije
-                                                </Link>
-                                            )}
-                                            </>
+                                                    <Link href="/" className={classNames('text-gray-300 hover:bg-gray-700 hover:text-white', 'px-3 py-2 rounded-md text-sm font-medium')}>
+                                                        Početna
+                                                    </Link>
+                                                    {/* If the teacher is not an admin it displays 'Nastavnik opcije'*/}
+                                                    {!isAdmin && (
+                                                        <Link href="/user" className={classNames('text-gray-300 hover:bg-gray-700 hover:text-white', 'px-3 py-2 rounded-md text-sm font-medium')}>
+                                                            Nastavnik opcije
+                                                        </Link>
+                                                    )}
+                                                    {/* If the teacher is an admin it displays 'Admin opcije' */}
+                                                    {isAdmin && (
+                                                        <Link href="/admin" className={classNames('text-gray-300 hover:bg-gray-700 hover:text-white', 'px-3 py-2 rounded-md text-sm font-medium')}>
+                                                            Admin opcije
+                                                        </Link>
+                                                    )}
+                                                </>
                                             )}
                                             {/* Displays only 'Početna' for guests/anonymus users */}
                                             {status !== "authenticated" && (
@@ -109,8 +109,8 @@ export default function Layout({ children }) {
                                                                             active ? 'bg-gray-100' : '',
                                                                             'block px-4 py-2 text-sm text-gray-700'
                                                                         )}
-                                                                        // Now it displays the type of user that is logged in;
-                                                                    > 
+                                                                    // Now it displays the type of user that is logged in;
+                                                                    >
                                                                         {data.user.first_name}
                                                                         {data.user.is_superuser && " (Admin)"}
                                                                         {!data.user.is_superuser && " (Nastavnik)"}
@@ -173,50 +173,50 @@ export default function Layout({ children }) {
                                             'block px-3 py-2 rounded-md text-base font-medium'
                                         )}
                                         aria-current={item.current ? 'page' : undefined}
+                                    >
+                                        {item.name}
+                                    </Disclosure.Button>
+                                ))}
+                            </div>
+                            <div className="border-t border-gray-700 pt-4 pb-3">
+                                <div className="flex items-center px-5">
+                                    <div className="flex-shrink-0">
+                                        <img className="h-10 w-10 rounded-full" src={userc.imageUrl} alt="" />
+                                    </div>
+                                    <div className="ml-3">
+                                        <div className="text-base font-medium leading-none text-white">{userc.name}</div>
+                                        <div className="text-sm font-medium leading-none text-gray-400">{userc.email}</div>
+                                    </div>
+                                    <button
+                                        type="button"
+                                        className="ml-auto flex-shrink-0 rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+                                    >
+                                        <span className="sr-only">View notifications</span>
+                                        <BellIcon className="h-6 w-6" aria-hidden="true" />
+                                    </button>
+                                </div>
+                                <div className="mt-3 space-y-1 px-2">
+                                    {userNavigation.map((item) => (
+                                        <Disclosure.Button
+                                            key={item.name}
+                                            as="a"
+                                            href={item.href}
+                                            className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
                                         >
                                             {item.name}
                                         </Disclosure.Button>
                                     ))}
                                 </div>
-                                <div className="border-t border-gray-700 pt-4 pb-3">
-                                    <div className="flex items-center px-5">
-                                        <div className="flex-shrink-0">
-                                            <img className="h-10 w-10 rounded-full" src={userc.imageUrl} alt="" />
-                                        </div>
-                                        <div className="ml-3">
-                                            <div className="text-base font-medium leading-none text-white">{userc.name}</div>
-                                            <div className="text-sm font-medium leading-none text-gray-400">{userc.email}</div>
-                                        </div>
-                                        <button
-                                            type="button"
-                                            className="ml-auto flex-shrink-0 rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
-                                        >
-                                            <span className="sr-only">View notifications</span>
-                                            <BellIcon className="h-6 w-6" aria-hidden="true" />
-                                        </button>
-                                    </div>
-                                    <div className="mt-3 space-y-1 px-2">
-                                        {userNavigation.map((item) => (
-                                            <Disclosure.Button
-                                                key={item.name}
-                                                as="a"
-                                                href={item.href}
-                                                className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
-                                            >
-                                                {item.name}
-                                            </Disclosure.Button>
-                                        ))}
-                                    </div>
-                                </div>
-                            </Disclosure.Panel>
-                        </>
-                    )}
-                </Disclosure>
-                <main>
-                    <div className="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">
-                        {children}
-                    </div>
-                </main>
-            </div>
-        )
-    }
+                            </div>
+                        </Disclosure.Panel>
+                    </>
+                )}
+            </Disclosure>
+            <main>
+                <div className="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">
+                    {children}
+                </div>
+            </main>
+        </div>
+    )
+}

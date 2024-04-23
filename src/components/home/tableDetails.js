@@ -7,11 +7,10 @@ import { PDFViewer, PDFDownloadLink } from '@react-pdf/renderer';
 import PDFDocument from "../PDFcomponent/PDFdocument";
 
 const TableDetails = ({ courseId }) => {
-    const router = useRouter();
-    const { data } = useSession();
-    const [students, setStudents] = useState([]);
     const [isVisible, setIsVisible] = useState(true); // State to manage visibility
     const [showPDF, setShowPDF] = useState(false);
+    const router = useRouter();
+    const { data } = useSession();
     const [student, setStudent] = useState(null);
     const [averageScores, setAverageScores] = useState(null);
     const [specialScores, setSpecialScores] = useState(null);
@@ -21,26 +20,153 @@ const TableDetails = ({ courseId }) => {
     const [sv3, setSV3] = useState(null);
     const [total, setTotal] = useState(null);
 
-    useEffect(() => {
-        const queryStudents = router.query.students;
-        console.log('Query Students:', queryStudents); // Log the value to check
-    
-        if (queryStudents) {
-            try {
-                const parsedStudents = JSON.parse(decodeURIComponent(queryStudents));
-                setStudents(parsedStudents);
-                const avgVI = parsedStudents.map(student => student.average_VI);
-                const avgVII = parsedStudents.map(student => student.average_VII);
-                const avgVIII = parsedStudents.map(student => student.average_VIII);
-                const avgIX = parsedStudents.map(student => student.average_IX);
+    // Function to fetch student data
+    async function getStudent(courseId) {
+        try {
+            const resp = await fetch(`${Url}/api/sec-students/student-list/`, {
+                method: 'GET',
+            });
+            const studentsData = await resp.json();
+            const filteredStudents = studentsData.filter(student => {
+                return student.desired_course_A.toUpperCase() === courseId.toUpperCase();
+            });
+            const studentIds = filteredStudents.map(student => student.id);
+            setStudent(filteredStudents);
+            return studentIds;
+        } catch (e) {
+            console.log(e);
+            return [];
+        }
+    }
 
-            // Set the average scores state
-                setAverageScores({ VI: avgVI, VII: avgVII, VIII: avgVIII, IX: avgIX });
+    // Function to fetch average scores for students
+    async function getAverageScoresForStudents(studentIds) {
+        try {
+            for (const studentId of studentIds) {
+                const resp = await fetch(`${Url}/api/sec-students/student/${studentId}/average/`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': data ? `Bearer ${data.user.token}` : null
+                    }
+                });
+                const scoresData = await resp.json();
+                const averageScoresPerGrade = {
+                    VI: scoresData.average_VI,
+                    VII: scoresData.average_VII,
+                    VIII: scoresData.average_VIII,
+                    IX: scoresData.average_IX,
+                };
+                setAverageScores(prevState => ({
+                    ...prevState,
+                    [studentId]: averageScoresPerGrade
+                }));
+                setSV(prevState => ({
+                    ...prevState,
+                    [studentId]: scoresData.points
+                }));
+            }
+        } catch (e) {
+            console.log(e);
+        }
+    }
+
+    // Function to fetch special scores for students
+    async function getSpecialScoresForStudents(studentIds, courseId) {
+        try {
+            for (const studentId of studentIds) {
+                const resp = await fetch(`${Url}/api/sec-students/student/${studentId}/special-courses/${courseId}/`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': data ? `Bearer ${data.user.token}` : null
+                    }
+                });
+                const scoresData = await resp.json();
+                const specialScoresData = scoresData.map(courseData => {
+                    const { ...rest } = courseData;
+                    return rest;
+                });
+                const totalPoints = specialScoresData.reduce((acc, courseData) => acc + courseData.total_special_points, 0);
+                setSpecialScores(prevState => ({
+                    ...prevState,
+                    [studentId]: specialScoresData
+                }));
+                setSV2(prevState => ({
+                    ...prevState,
+                    [studentId]: totalPoints
+                }));
+            }
+        } catch (e) {
+            console.log(e);
+        }
+    }
+
+    // Function to fetch acknowledgment points for students
+    async function getAcknowledgmentPointsForStudents(studentIds) {
+        try {
+            for (const studentId of studentIds) {
+                const resp = await fetch(`${Url}/api/sec-students/student/${studentId}/acknowledgmentsPoints/`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': data ? `Bearer ${data.user.token}` : null
+                    }
+                });
+                const acknowledgmentData = await resp.json();
+                const acknowledgmentPointsPerLevel = {
+                    O: acknowledgmentData.total_district_points,
+                    K: acknowledgmentData.total_canton_points,
+                    F: acknowledgmentData.total_federal_points,
+                };
+                setSV3(prevState => ({
+                    ...prevState,
+                    [studentId]: acknowledgmentData.total_ack_points
+                }));
+                setAcknowledgementPoints(prevState => ({
+                    ...prevState,
+                    [studentId]: acknowledgmentPointsPerLevel
+                }));
+            }
+        } catch (e) {
+            console.log(e);
+        }
+    }
+
+    // Function to fetch total points for students
+    async function getTotalPointsForStudents(studentIds, courseId) {
+        try {
+            for (const studentId of studentIds) {
+                const resp = await fetch(`${Url}/api/sec-students/student/${studentId}/${courseId.toUpperCase()}/points-summary-per-course-code/`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': data ? `Bearer ${data.user.token}` : null
+                    }
+                });
+                const { total_points } = await resp.json();
+                setTotal(prevState => ({
+                    ...prevState,
+                    [studentId]: total_points || 0
+                }));
+            }
+        } catch (e) {
+            console.log(e);
+        }
+    }
+
+    useEffect(() => {
+        async function fetchData() {
+            try {
+                const studentIds = await getStudent(courseId);
+                await Promise.all([
+                    getAverageScoresForStudents(studentIds),
+                    getSpecialScoresForStudents(studentIds, courseId),
+                    getAcknowledgmentPointsForStudents(studentIds),
+                    getTotalPointsForStudents(studentIds, courseId),
+                ]);
             } catch (error) {
-                console.error('Error parsing JSON:', error);
+                console.log(error);
             }
         }
-    }, [router.query.students]);
+        fetchData();
+    }, [courseId]);
 
     const sortedStudents = student ? [...student].sort((a, b) => {
         const totalA = total && total[a?.id] !== undefined ? total[a.id] : 0;
@@ -48,8 +174,6 @@ const TableDetails = ({ courseId }) => {
         return totalB - totalA;
     }) : [];
 
-
-    console.log(averageScores)
     return (
         <div className="full-w overflow-x-auto">
             <button onClick={() => router.push(`/home/${courseId}`)} className="flex items-center px-2 py-1 rounded-md hover:bg-gray-300 focus:outline-none">
@@ -80,10 +204,10 @@ const TableDetails = ({ courseId }) => {
                         )}
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
-                        {isVisible && students.map((studentData, studentIndex) => (
+                        {isVisible && sortedStudents.map((studentData, studentIndex) => (
                             <tr key={studentData.id}>
                                 <td className="px-6 py-4 text-center whitespace-nowrap border-r border-gray-200">{studentIndex + 1}</td>
-                                {[`${studentData?.name || ''} ${studentData?.last_name || ''}${studentData?.special_case !== 'regular' ? '*' : ''}`, studentData?.primary_school || '', ...(averageScores && averageScores[studentData[1]] ? Object.values(averageScores[studentData.id]) : []), sv && sv[studentData.id] ? sv[studentData.id] : '', ...(specialScores && specialScores[studentData.id] && specialScores[studentData.id].length > 0 ? Object.values(specialScores[studentData.id][0]).filter((_, index) => index !== 0 && index !== Object.values(specialScores[studentData.id][0]).length - 1) : []), sv2 && sv2[studentData.id] ? sv2[studentData.id] : '', ...(acknowledgmentPoints && acknowledgmentPoints[studentData.id] ? Object.values(acknowledgmentPoints[studentData.id]) : []), sv3 && sv3[studentData.id] !== undefined ? sv3[studentData.id] : 0, total && total[studentData.id] ? total[studentData.id] : ''].map((value, index) => (
+                                {[`${studentData?.name || ''} ${studentData?.last_name || ''}${studentData?.special_case !== 'regular' ? '*' : ''}`, studentData?.primary_school || '', ...(averageScores && averageScores[studentData.id] ? Object.values(averageScores[studentData.id]) : []), sv && sv[studentData.id] ? sv[studentData.id] : '', ...(specialScores && specialScores[studentData.id] && specialScores[studentData.id].length > 0 ? Object.values(specialScores[studentData.id][0]).filter((_, index) => index !== 0 && index !== Object.values(specialScores[studentData.id][0]).length - 1) : []), sv2 && sv2[studentData.id] ? sv2[studentData.id] : '', ...(acknowledgmentPoints && acknowledgmentPoints[studentData.id] ? Object.values(acknowledgmentPoints[studentData.id]) : []), sv3 && sv3[studentData.id] !== undefined ? sv3[studentData.id] : 0, total && total[studentData.id] ? total[studentData.id] : ''].map((value, index) => (
                                     <td key={index} className="px-6 py-4 text-center whitespace-nowrap border-r border-gray-200">{value}</td>
                                 ))}
                             </tr>
@@ -127,4 +251,3 @@ const TableDetails = ({ courseId }) => {
 }
 
 export default TableDetails;
-

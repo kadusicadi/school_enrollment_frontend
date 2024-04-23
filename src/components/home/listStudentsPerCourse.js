@@ -69,7 +69,7 @@ const ListStudentsPerCourse = ({ courseId }) => {
                             {filteredStudents.map((item, index) => (
                                 <div key={index} className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5 sm:px-6">
                                     <dt className="text-sm font-medium text-gray-500 first-letter:capitalize">{index + 1}. {item.name} {item.last_name}</dt>
-                                    <dd className="mt-1 text-sm text-gray-900 sm:col-span-1 sm:mt-0">Bodovi: {item.totalPoints}</dd>
+                                    <dd className="mt-1 text-sm text-gray-900 sm:col-span-1 sm:mt-0">Bodovi: {item.total_points}</dd>
                                     <Link
                                     href={`/home/${courseId}/${item.id}`}
                                     passHref>
@@ -93,44 +93,55 @@ export const getAllStudents = async (courseId) => {
         });
         const studentsData = await resp.json();
 
-        return Object.values(studentsData).map(studentArray => {
-            const [
-                courseName,
-                id,
-                name,
-                lastName,
-                middleName,
-                primary_school,
-                status,
-                courseCode,
-                totalPoints,
-                [
-                    { average_VI, average_VII, average_VIII, average_IX, points },
-                    { total_special_points },
-                    { acknowledgments: { total_federal_points, total_canton_points, total_district_points, total_ack_points } },
-                    //{ sc_per_grade }
-                ]
-            ] = studentArray;
-        
-            return {
-                id,
-                name,
-                last_name: lastName,
-                primary_school,
-                totalPoints,
-                average_VI,
-                average_VII,
-                average_VIII,
-                average_IX,
-                points,
-                total_special_points,
-                total_federal_points,
-                total_canton_points,
-                total_district_points,
-                total_ack_points,
-                //sc_per_grade
-            };
-        });
+        console.log("studentsData:", studentsData);
+
+        const extractedStudents = [];
+
+        const studentEntries = Object.values(studentsData).filter(entry => Array.isArray(entry));
+
+    
+    for (const studentEntry of studentEntries) {
+        const student = {
+            // [0];
+            id: studentEntry[0]?.pupil_id || null,
+            name: studentEntry[0]?.pupil_name || "",
+            last_name: studentEntry[0]?.pupil_last_name || "",
+            middle_name: studentEntry[0]?.pupil_middle_name || "",
+            primary_school: studentEntry[0]?.pupil_primary_school || "",
+            status: studentEntry[0]?.pupil_status || "",
+            desired_course: studentEntry[0]?.pupil_desired_course || "",
+            // [1];
+            total_points: studentEntry[1]?.total_score || 0,
+            // Statictics array [2][0];
+            average_VI: studentEntry[2]?.statistics[0]?.average_VI || 0,
+            average_VII: studentEntry[2]?.statistics[0]?.average_VII || 0,
+            average_VIII: studentEntry[2]?.statistics[0]?.average_VIII || 0,
+            average_IX: studentEntry[2]?.statistics[0]?.average_IX || 0,
+            points: studentEntry[2]?.statistics[0]?.points || 0,
+            // Total special points [2][1];
+            total_special_points: studentEntry[2]?.statistics[1]?.total_special_points || 0,
+            // Acknowledgments [2][2];
+            total_federal_points: studentEntry[2]?.statistics[2]?.acknowledgments?.total_federal_points || 0,
+            total_canton_points: studentEntry[2]?.statistics[2]?.acknowledgments?.total_canton_points || 0,
+            total_district_points: studentEntry[2]?.statistics[2]?.acknowledgments?.total_district_points || 0,
+            total_ack_points: studentEntry[2]?.statistics[2]?.acknowledgments?.total_ack_points || 0,
+            // Special courses grades [2][1];
+            sc_per_grade: studentEntry[2]?.statistics[1]?.sc_per_grade || null,
+        };
+
+        // Extracting special courses grade data;
+        const scPerGrade = studentEntry[2]?.statistics[1]?.sc_per_grade || [];
+        const formattedScPerGrade = scPerGrade.map(grade => ({
+            class_code: grade.class_code || "",
+            course_code: grade.course_code || "",
+            score: grade.score || 0    
+        }));
+
+        student.sc_per_grade = formattedScPerGrade;
+    
+        extractedStudents.push(student);
+    }
+    return extractedStudents;
     } catch (e) {
         console.error("Error fetching student data:", e);
         return [];

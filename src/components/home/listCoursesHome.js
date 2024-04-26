@@ -12,9 +12,6 @@ const ListCoursesHome = () => {
     async function getAllCourses() {
         try {
             const resp = await fetch(`${Url}api/sec-schools/school-list/1/courses/`, {
-                headers: {
-                    'Authorization': data ? `Bearer ${data.user.token}` : null // Include authorization token in headers
-                }
             });
             const coursesData = await resp.json();
             setCourses(coursesData);
@@ -51,8 +48,7 @@ const ListCoursesHome = () => {
                                 )}
                                 {item && item._course_code && (
                                     <>
-                                        <dd className="mt-1 text-sm text-gray-900 sm:col-span-1 sm:mt-0">Kod: {item._course_code}</dd>
-                                        <dd className="mt-1 text-sm text-gray-900 sm:col-span-1 sm:mt-0">Trajanje: {item.course_duration}</dd>
+                                        <dd className="ml-20 mt-1 text-sm text-gray-900 sm:col-span-1 sm:mt-0">Trajanje: {item.course_duration}. godine</dd>
                                     </>
                                 )}
                             </div>

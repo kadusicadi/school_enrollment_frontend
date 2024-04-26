@@ -9,7 +9,18 @@ const GradePage = ({ studentId, setSelectedPage, selectedTab }) => {
   const [classId, setClassId] = useState('');
   const [existingScores, setExistingScores] = useState([]);
 
-  // This function is used to check if there are already exisitng scores for class_id, course_code, pupil_id;
+  // Function to map the current tab to the next tab
+  const getNextTab = (currentTab) => {
+    const tabToGradeMap = {
+      sixthGrade: 'seventhGrade',
+      seventhGrade: 'eightGrade',
+      eightGrade: 'ninthGrade',
+      ninthGrade: null, // No next tab for ninth grade
+    };
+    return tabToGradeMap[currentTab];
+  };
+
+  // This function is used to check if there are already existing scores for class_id, course_code, pupil_id;
   const fetchExistingScores = async () => {
     try {
       const response = await fetch(`${Url}api/sec-students/student-list/${studentId}/course-create/`, {
@@ -19,15 +30,14 @@ const GradePage = ({ studentId, setSelectedPage, selectedTab }) => {
       });
       if (response.ok) {
         const scores = await response.json();
-        // Here we filter the existing score based on the grade tab;
         const tabToGradeMap = {
           sixthGrade: 'VI',
           seventhGrade: 'VII',
           eightGrade: 'VIII',
           ninthGrade: 'IX',
         };
-        const grade = tabToGradeMap[selectedTab];
-        const filteredScores = scores.filter(score => score.class_id === grade);
+        const currentGrade = tabToGradeMap[selectedTab];
+        const filteredScores = scores.filter(score => score.class_id === currentGrade);
         setExistingScores(filteredScores);
       } else {
         console.error('Failed to fetch existing scores!');
@@ -39,24 +49,25 @@ const GradePage = ({ studentId, setSelectedPage, selectedTab }) => {
     }
   };
 
-  // This function is used to get the course_code based on the corresponding class_id;
-  const fetchCourseCodes = async () => {
+  // Function to get the course_code based on the corresponding class_id
+  const fetchCourseCodes = async (grade) => {
     try {
-      const response = await fetch(`${Url}api/sec-students/student/class_course/`);
+      let classId = '';
+      if (grade === '6') {
+        classId = 'VI';
+      } else if (grade === '7') {
+        classId = 'VII';
+      } else if (grade === '8') {
+        classId = 'VIII';
+      } else if (grade === '9') {
+        classId = 'IX';
+      }
+      const response = await fetch(`${Url}api/sec-students/student-list/primary-school/courses/${grade}/`);
       if (response.ok) {
         const subjects = await response.json();
-        const tabToGradeMap = {
-          sixthGrade: 'VI',
-          seventhGrade: 'VII',
-          eightGrade: 'VIII',
-          ninthGrade: 'IX',
-        };
-        const grade = tabToGradeMap[selectedTab];
-        const courseCodes = subjects
-          .filter(subject => subject.class_id === grade)
-          .map(subject => subject.course_code);
+        const courseCodes = subjects.map(subject => subject._courses.course_code);
         setGradeSubjects([...new Set(courseCodes)]);
-        setClassId(grade);
+        setClassId(classId);
       } else {
         console.error('Failed to fetch courses!');
       }
@@ -67,7 +78,7 @@ const GradePage = ({ studentId, setSelectedPage, selectedTab }) => {
 
   useEffect(() => {
     fetchExistingScores();
-    fetchCourseCodes();
+    fetchCourseCodes(selectedTab === 'sixthGrade' ? '6' : selectedTab === 'seventhGrade' ? '7' : selectedTab === 'eightGrade' ? '8' : '9');
   }, [selectedTab]);
 
   const handleSubmit = async (dataVal) => {
@@ -111,7 +122,12 @@ const GradePage = ({ studentId, setSelectedPage, selectedTab }) => {
             body: JSON.stringify(courseData),
           });
         }
-        setSelectedPage('editStudent');
+        const nextTab = getNextTab(selectedTab);
+        if (nextTab) {
+          setSelectedPage(nextTab);
+        } else {
+          setSelectedPage('editStudent');
+        }
       } else {
         console.log('Existing scores found. Data will not be sent.');
       }

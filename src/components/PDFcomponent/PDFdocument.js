@@ -1,3 +1,4 @@
+import React from 'react';
 import { Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer';
 
 const styles = StyleSheet.create({
@@ -8,7 +9,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   table: {
-    width: '100%', // Set width to 100% to span the full page
+    width: '100%',
     border: '1px solid #000',
     marginBottom: 10,
   },
@@ -18,7 +19,7 @@ const styles = StyleSheet.create({
   tableCell: {
     padding: 5,
     border: '1px solid #000',
-    width: 'auto', // Set to 'auto' to allow flexible width
+    width: 'auto',
     fontSize: 8,
     textAlign: 'center',
   },
@@ -26,61 +27,87 @@ const styles = StyleSheet.create({
     backgroundColor: '#f0f0f0',
     border: '1px solid #000',
     fontWeight: 'normal',
-    width: 'auto', // Set the width to match the width of the corresponding data cell
+    width: 'auto',
   },
 });
 
-const PDFDocument = ({ sortedStudents, averageScores, specialScores, acknowledgmentPoints, sv, sv2, sv3, total }) => {
 
-  // Calculate the maximum length of text for each column
-  const maxTextLengths = ['RB', 'Ime i prezime', 'Osnovna škola', ...(averageScores ? Object.keys(averageScores[Object.keys(averageScores)[0]]) : []), 'SV (Opšti kriterij)', ...(specialScores && specialScores[Object.keys(specialScores)[0]] && specialScores[Object.keys(specialScores)[0]].length > 0 ? Object.keys(specialScores[Object.keys(specialScores)[0]][0]).filter(key => key !== 'course' && key !== 'total_special_points') : []), 'SV (posebni kriterij)', 'O', 'K', 'F', 'SV (specijalni kriterij)', 'Ukupno'].reduce((acc, header) => {
-    acc[header] = sortedStudents.reduce((max, student) => {
-      const value = student[header];
-      if (value && value.length > max) {
-        return value.length;
-      }
-      return max;
-    }, header.length) + 7;
-    return acc;
-  }, {});
+const PDFDocument = ({ students, specialScoreNames, courseId }) => {
+   const calculateHeaderWidth = (header) => {
+    let width;
+    switch (header) {
+      case 'RB':
+        width = '3%'; break;
+      case 'Ime i prezime':
+        width = '9%'; break;
+      case 'Osnovna škola':
+        width = '9%'; break;
+      case 'SV-I':
+        width = '4%'; break;
+      case 'SV-II':
+        width = '4%'; break;
+      case 'SV-III':
+        width = '4%'; break;
+      case 'O':
+        width = '4%'; break;
+      case 'K':
+        width = '4%'; break;
+      case 'F':
+        width = '4%'; break;
+      case 'Ukupno':
+        width = '5%'; break;
+      default:
+        width = '5%'; break;
+    }
+    return width;
+  };
 
-  // Calculate the total length of all headers
-  const totalHeaderLength = Object.values(maxTextLengths).reduce((total, length) => total + length, 0);
-
-  // Render function
   return (
     <Document>
       <Page size="A4" style={styles.page} orientation="landscape">
         <View style={styles.section}>
-          <Text style={{ fontWeight: 'bold', fontSize: 12 }}>JU TEHNIČKA ŠKOLA ZENICA</Text>
+          <Text style={{ fontWeight: 'bold', fontSize: 12}}>JU TEHNICKA SKOLA ZENICA</Text>
+          <Text style={{ fontWeight: 'bold', fontSize: 12, marginBottom: 2}}>Smjer: {courseId}</Text>
           <View style={styles.table}>
-            <View style={styles.tableRow}>
-              <Text style={[styles.tableCell, styles.headerCell, { width: '20%' }]} colSpan={4}>Generalije</Text>
-              {averageScores && Object.keys(averageScores).length > 0 && (
-                <Text style={[styles.tableCell, styles.headerCell, { width: '22%' }]} colSpan={5}>I-Opšti kriterij - USPJEH VI - IX O.Š. x3</Text>
-              )}
-              {averageScores && Object.keys(averageScores).length > 0 && (
-                <Text style={[styles.tableCell, styles.headerCell, { width: '38%' }]} colSpan={7}>II-Posebni kriterij - RELEVANTNI NASTAVNI PREDMETI</Text>
-              )}
-              {averageScores && Object.keys(averageScores).length > 0 && (
-                <Text style={[styles.tableCell, styles.headerCell, { width: '22%' }]} colSpan={4}>III-Specijalni kriterij - TAKMIČENJE VIII i IX RAZRED</Text>
-              )}
+          <View style={styles.tableRow}>
+            {/* 1st header cells */}
+              <Text style={[styles.tableCell, styles.headerCell, { width: '21%' }]} colSpan={3}>Generalije</Text>
+              <Text style={[styles.tableCell, styles.headerCell, { width: '24%' }]} colSpan={5}>I-Opšti kriterij - Uzima se USPJEH od VI do IX razreda O.Š. zatim se sabere i pomnoži sa 3. (max: 60)</Text>
+              <Text style={[styles.tableCell, styles.headerCell, { width: '34%' }]} colSpan={7}>II-Posebni kriterij - Uzimaju se relevantni nastavni predmeti iz završnih razreda VIII i IX i saberu. (max: 30)</Text>
+              <Text style={[styles.tableCell, styles.headerCell, { width: '21%' }]} colSpan={4}>III-Specijalni kriterij - Uzimaju se bodovi iz takmicenja za VIII i IX razred i saberu. (ovo su dodatni bodovi)</Text>
             </View>
             <View style={styles.tableRow}>
-              <Text style={[styles.tableCell, styles.headerCell]}>RB</Text>
-              {['Ime i prezime', 'Osnovna škola', ...(averageScores ? Object.keys(averageScores[Object.keys(averageScores)[0]]) : []), 'SV (Opšti kriterij)', ...(specialScores && specialScores[Object.keys(specialScores)[0]] && specialScores[Object.keys(specialScores)[0]].length > 0 ? Object.keys(specialScores[Object.keys(specialScores)[0]][0]).filter(key => key !== 'course' && key !== 'total_special_points') : []), 'SV (posebni kriterij)', 'O', 'K', 'F', 'SV (specijalni kriterij)', 'Ukupno'].map((header, index) => (
-                <Text key={index} style={[styles.tableCell, styles.headerCell, { width: `${(maxTextLengths[header] / totalHeaderLength) * 100}%` }]}>{header}</Text>
+              {/* 2nd header cells */}
+              {['RB', 'Ime i prezime', 'Osnovna škola', ...(students[0]?.averageScores ? Object.keys(students[0]?.averageScores) : []), 'SV-I', ...specialScoreNames, 'SV-II', 'O', 'K', 'F', 'SV-III', 'Ukupno'].map((header, index) => (
+                <Text key={index} style={[styles.tableCell, styles.headerCell, { width: calculateHeaderWidth(header) }]}>{header}</Text>
               ))}
             </View>
-            {/* Student data */}
-            {sortedStudents && sortedStudents.map((student, studentIndex) => (
-              <View key={student.id} style={styles.tableRow}>
-                {/* RB */}
-                <Text style={[styles.tableCell, { width: `${(maxTextLengths['RB'] / totalHeaderLength) * 100}%` }]}>{studentIndex + 1}</Text>
-                {/* Data cells */}
-                {[`${student?.name || ''} ${student?.last_name || ''}`, student?.primary_school || '', ...(averageScores && averageScores[student.id] ? Object.values(averageScores[student.id]) : []), sv && sv[student.id] ? sv[student.id] : '', ...(specialScores && specialScores[student.id] && specialScores[student.id].length > 0 ? Object.values(specialScores[student.id][0]).filter((_, index) => index !== 0 && index !== Object.values(specialScores[student.id][0]).length - 1) : []), sv2 && sv2[student.id] ? sv2[student.id] : '', ...(acknowledgmentPoints && acknowledgmentPoints[student.id] ? Object.values(acknowledgmentPoints[student.id]) : []), sv3 && sv3[student.id] !== undefined ? sv3[student.id] : 0, total && total[student.id] ? total[student.id] : ''].map((value, index) => (
-                  <Text key={index} style={[styles.tableCell, { width: `${(maxTextLengths[Object.keys(maxTextLengths)[index + 1]] / totalHeaderLength) * 100}%` }]}>{value}</Text>
+            {/* Rows for each student */}
+            {students.map((student, studentIndex) => (
+              <View key={studentIndex} style={styles.tableRow}>
+                {/* Cells for each student data */}
+                <Text style={[styles.tableCell, { width: '3%' }]}>{`${studentIndex + 1}`}</Text>
+                <Text style={[styles.tableCell, { width: '9%' }]}>{`${student.name || ''} ${student.last_name || ''}`}</Text>
+                <Text style={[styles.tableCell, { width: '9%' }]}>{student.primary_school || ''}</Text>
+                {/* Average scores */}
+                {Object.values(student?.averageScores || {}).map((average, index) => (
+                  <Text key={index} style={[styles.tableCell, { width: '5%' }]}>{average}</Text> //20 24
                 ))}
+                {/* SV (Opšti kriterij) */}
+                <Text style={[styles.tableCell, { width: '4%' }]}>{student.sv || '0'}</Text>
+                {/* Special score names */}
+                {specialScoreNames.map((specialScore, index) => (
+                  <Text key={index} style={[styles.tableCell, { width: '5%' }]}>{student.specialScores[specialScore] || '0'}</Text> //30 18
+                ))}
+                <Text style={[styles.tableCell, { width: '4%' }]}>{student.sv2 || '0'}</Text>
+                {/* O, K, F */}
+                <Text style={[styles.tableCell, { width: '4%' }]}>{student.acknowledgmentPoints['O'] || '0'}</Text>
+                <Text style={[styles.tableCell, { width: '4%' }]}>{student.acknowledgmentPoints['K'] || '0'}</Text>
+                <Text style={[styles.tableCell, { width: '4%' }]}>{student.acknowledgmentPoints['F'] || '0'}</Text>
+                {/* SV (specijalni kriterij) */}
+                <Text style={[styles.tableCell, { width: '4%' }]}>{student.sv3 || '0'}</Text>
+                {/* Total */}
+                <Text style={[styles.tableCell, { width: '5%' }]}>{student.total || '0'}</Text>
               </View>
             ))}
           </View>
@@ -89,5 +116,6 @@ const PDFDocument = ({ sortedStudents, averageScores, specialScores, acknowledgm
     </Document>
   );
 };
+
 
 export default PDFDocument;

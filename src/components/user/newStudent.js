@@ -40,7 +40,7 @@ const NewStudents = ({ setSelectedPage }) => {
         }
       );
       const coursesData = await respCourses.json();
-      setCourses(coursesData.results);
+      setCourses(coursesData);
     } catch (e) {
       console.log(e);
     }
@@ -57,6 +57,7 @@ const NewStudents = ({ setSelectedPage }) => {
       const storeData = {
         primary_school: dataVal.primary_school,
         name: dataVal.name,
+        middle_name: dataVal.middle_name,
         last_name: dataVal.last_name,
         gender: dataVal.gender,
         address: dataVal.address,

@@ -69,18 +69,29 @@ const EditStudent = ({ studentId }) => {
                 {editingStudent && (
                     <div>
                         <h1 className="text-4xl font-bold mb-8 text-center text-gray-700">Edituj učenika</h1>
+                        <div className="mb-1 mt-1 font-bold text-gray-800">Ime:</div>
                         <input
                             type="text"
                             value={editingStudent.name}
                             onChange={(e) => handleInputChange(e, 'name')}
                             className="w-full border border-gray-300 rounded-md mb-2 px-4 py-2"
                         />
+                        <div className="mb-1 mt-1 font-bold text-gray-800">Prezime:</div>
                         <input
                             type="text"
                             value={editingStudent.last_name}
                             onChange={(e) => handleInputChange(e, 'last_name')}
                             className="w-full border border-gray-300 rounded-md mb-2 px-4 py-2"
                         />
+                        <div className="mb-1 mt-1 font-bold text-gray-800">Ime jednog roditelja:</div>
+                        <input
+                        type="text"
+                        placeholder="Ime jednog roditelja"
+                        value={editingStudent.guardian_name}
+                        onChange={(e) => handleInputChange(e, 'guardian_name')}
+                        className="w-full border border-gray-300 rounded-md mb-2 px-4 py-2"
+                        />
+                        <div className="mb-1 mt-1 font-bold text-gray-800">Email:</div>
                         <input
                             type="text"
                             value={editingStudent.email}

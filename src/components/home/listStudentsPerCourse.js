@@ -4,11 +4,14 @@ import { useRouter } from "next/router";
 import { ChevronLeftIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 
+var filteredStudents;
+var allStudents;
+var setStudents;
+
 const ListStudentsPerCourse = ({ courseId }) => {
     const router = useRouter();
-    const [students, setStudents] = useState([]);
+    [allStudents, setStudents] = useState([]);
     const [searchInput, setSearchInput] = useState("");
-
     async function getStudents(courseId) {
         try {
             const studentsData = await getAllStudents(courseId);
@@ -33,12 +36,22 @@ const ListStudentsPerCourse = ({ courseId }) => {
     };
 
     // Filter students based on search input
-    const filteredStudents = students.filter(student =>
+    filteredStudents = allStudents.filter(student =>
         student.name.toLowerCase().includes(searchInput.toLowerCase()) ||
         student.last_name.toLowerCase().includes(searchInput.toLowerCase())
     );
 
-    console.log(filteredStudents[0])
+    // Sorting students by points
+    const sortedStudents = [...filteredStudents].sort((a, b) => {
+        if (a.status !== 'regular' && b.status === 'regular') {
+            return -1; // Place students with status other than 'regular' above regular students
+        } else if (a.status === 'regular' && b.status !== 'regular') {
+            return 1; // Place regular students below students with status other than 'regular'
+        } else {
+            // If both are either 'regular' or have a different status, sort by points
+            return b.total_points - a.total_points;
+        }
+    });
 
     return (
         <div>
@@ -63,32 +76,37 @@ const ListStudentsPerCourse = ({ courseId }) => {
                         </button>
                     </div>
                 </div>
-                {filteredStudents.length > 0 && (
+                {sortedStudents.length > 0 ? (
                     <div className="border-t border-gray-200 px-4 py-5 sm:p-0">
                         <dl className="sm:divide-y sm:divide-gray-200">
-                            {filteredStudents.map((item, index) => (
+                            {sortedStudents.map((item, index) => (
                                 <div key={index} className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5 sm:px-6">
-                                    <dt className="text-sm font-medium text-gray-500 first-letter:capitalize">{index + 1}. {item.name} {item.last_name}</dt>
+                                    <dt className="text-sm font-medium text-gray-500 first-letter:capitalize">
+                                        {index + 1}. {item.status !== 'regular' ? <span className="">*</span> : null} {item.name} {item.last_name}
+                                    </dt>
                                     <dd className="mt-1 text-sm text-gray-900 sm:col-span-1 sm:mt-0">Bodovi: {item.total_points}</dd>
-                                    <Link
-                                    href={`/home/${courseId}/${item.id}`}
-                                    passHref>
-                                        Detalji
-                                </Link>
+                                    <Link href={`/home/${courseId}/${item.id}`} passHref>
+                                        <div className="mt-1 text-sm text-black bg-gray-300 sm:col-span-1 px-4 py-2 hover:bg-gray-400 rounded-md flex items-center justify-center shadow-lg ml-2" style={{ alignSelf: "center", width: "100px", marginLeft: "60px" }}>
+                                            Uredi
+                                        </div>
+                                    </Link>
                                 </div>
                             ))}
                         </dl>
                     </div>
+                ) : (
+                    <p className="text-red-500 font-bold mt-3">Trenutno niko nije upisan.</p>
                 )}
             </div>
         </div>
     );
 };
 
+
 // Function to retrieve all students
 export const getAllStudents = async (courseId) => {
     try {
-        const resp = await fetch(`${Url}api/sec-students/student-list/1/${courseId}/1/10/`, {
+        const resp = await fetch(`${Url}api/sec-students/student-list/1/${courseId}/1/5/`, {
             method: 'GET',
         });
         const studentsData = await resp.json();
@@ -103,6 +121,7 @@ export const getAllStudents = async (courseId) => {
     for (const studentEntry of studentEntries) {
         const student = {
             // [0];
+            course_name: studentEntry[0]?.course_name || "",
             id: studentEntry[0]?.pupil_id || null,
             name: studentEntry[0]?.pupil_name || "",
             last_name: studentEntry[0]?.pupil_last_name || "",
@@ -147,5 +166,8 @@ export const getAllStudents = async (courseId) => {
         return [];
     }
 };
+
+export {filteredStudents}
+export {allStudents}
 
 export default ListStudentsPerCourse;

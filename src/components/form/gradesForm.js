@@ -51,7 +51,14 @@ const GradeForm = ({ onSubmit, classId, subjects, pupilId, existingScores }) => 
         setValue(subject, savedGrade); // Use setValue to set form values
       }
     });
-  }, [classId, subjects, setValue]);
+  
+    // Set existing scores in the form fields
+    existingScores.forEach(score => {
+      if (score.class_id === classId) {
+        setValue(score.course_code, score.score.toString()); // Convert score to string and set in the form
+      }
+    });
+  }, [classId, subjects, setValue, existingScores, pupilId]);
 
   // Function to save grade to local storage
   const saveGradeToLocalStorage = (fieldName, value) => {

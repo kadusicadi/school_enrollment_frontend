@@ -9,11 +9,13 @@ const ListStudents = () => {
     const [nameInput, setNameInput] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+    const [showAllCourses, setShowAllCourses] = useState(false);
+    const [selectedStudentIndex, setSelectedStudentIndex] = useState(null);
 
     const getStudentPoints = async (name) => {
         try {
             setLoading(true);
-            const resp = await fetch(`${Url}api/sec-students/student/points-summary/${name}/`, {
+            const resp = await fetch(`${Url}api/sec-students/student-list/1/student/points-summary-all-courses/${name}/`, {
                 method: 'GET',
                 headers: {
                     'Authorization': data ? `Bearer ${data.user.token}` : null
@@ -21,28 +23,52 @@ const ListStudents = () => {
             });
             if (resp.status === 404) {
                 setStudentsData(null);
-                setError('Učenik nije upisan!');
+                setError('Učenik nije upisan.');
             } else {
-                const studentsData = await resp.json();
-                setStudentsData(studentsData);
-                setError('');
+                const studentData = await resp.json();
+                if (studentData && studentData.length > 0) {
+                    setStudentsData(studentData);
+                    setError('');
+                } else {
+                    setError('Podaci o učenicima nisu pronađeni.');
+                    setStudentsData(null);
+                }
             }
         } catch (e) {
             console.log(e);
-            setError('Dogodila se greška prilikom dohvaćanja podataka.');
+            setError('Učenik sa tim imenom ili prezimenom nije upisan.');
         } finally {
             setLoading(false);
         }
-    }
-
+    };
+    
     const handleInputChange = (event) => {
         setNameInput(event.target.value);
+    };
+
+    const handleKeyPress = (event) => {
+        if (event.key === 'Enter') {
+            handleShowPoints();
+        }
     };
 
     const handleShowPoints = () => {
         if (nameInput.trim() !== '') {
             getStudentPoints(nameInput);
         }
+    };
+    
+    console.log(studentsData)
+
+    const handleToggleExpand = (index) => {
+        // If the clicked student index is the same as the selected student index;
+        // toggle the showAllCourses state, otherwise, set the showAllCourses state to true for the clicked student;
+        setShowAllCourses(prev => selectedStudentIndex === index ? !prev : true);
+        setSelectedStudentIndex(index);
+    };
+
+    const handleShowAllCourses = () => {
+        setShowAllCourses(prev => !prev);
     };
 
     return (
@@ -60,38 +86,80 @@ const ListStudents = () => {
                             className="border rounded w-full py-2 px-3"
                             value={nameInput}
                             onChange={handleInputChange}
+                            onKeyPress={handleKeyPress}
                             placeholder="Unesi ime i prezime"
                         />
-                        <button className="ml-1 text-sm text-black bg-gray-300 px-4 py-2 hover:bg-gray-400 rounded-md flex items-center justify-center shadow-lg" onClick={handleShowPoints} disabled={loading}>
+                        <button className="ml-1 text-sm font-bold text-white bg-gray-600 px-4 py-2 hover:bg-gray-400 rounded-md flex items-center justify-center shadow-lg" onClick={handleShowPoints} disabled={loading}>
                             Prikaži
                         </button>
                     </div>
                 </div>
-                <div className="border-t border-gray-200 px-4 py-5 sm:p-0">
-                    <dl className="sm:divide-y sm:divide-gray-200">
-                        {error && <p className="text-red-500">{error}</p>}
-                        {studentsData && (
-                            <>
-                                {studentsData
-                                    .sort((a, b) => (a.course === a.desired_course_A ? -1 : b.course === b.desired_course_A ? 1 : 0))
-                                    .map((course, index) => (
-                                        <div key={index} className={`rounded-md p-4 my-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5 sm:px-6 ${course.course === course.desired_course_A ? 'bg-blue-300' : 'bg-gray-100'}`}>
-                                            <dt className="text-base">Smjer: {course.course}</dt>
-                                            <dd className="text-base">Bodovi: {course.total_points}</dd>
-                                            <Link href={`/home/${course.course}/${course.id}`} passHref>
-                                                <button className="text-sm text-black bg-gray-300 px-4 py-2 hover:bg-gray-400 rounded-md flex items-center justify-center shadow-lg">
-                                                    Detalji
+                {error === '' ? (
+                    <div className="border-t border-gray-200 px-4 py-5 sm:p-0">
+                        <dl className="sm:divide-y sm:divide-gray-200">
+                            {studentsData && studentsData.map((student, studentIndex) => {
+                                // Check if there are duplicates of the current student's name and last name in the studentsData array
+                                const hasDuplicateNames = studentsData.filter(s => s.pupil_name === student.pupil_name && s.pupil_last_name === student.pupil_last_name).length > 1;
+
+                                return (
+                                    <div key={studentIndex} className="rounded-md p-4 my-2">
+                                        <div className="flex items-start mb-3">
+                                            <div className="ml-7 flex-grow">
+                                                <div className="text-base font-bold">Ime i prezime:</div>
+                                                {/* Render guardian_name only if there are duplicate names and last names */}
+                                                <dt className="text-base text-lg">{student.pupil_name} {hasDuplicateNames && `(${student.pupil_guardian_name})`} {student.pupil_last_name}</dt>
+                                            </div>
+                                            <div className="mr-20 flex-grow">
+                                                <div className="text-base font-bold">Pozicija:</div>
+                                                <dt className="text-base text-lg ml-5">1</dt>
+                                            </div>
+                                            <div className="flex-grow">
+                                                <div className="text-base font-bold">Smjer:</div>
+                                                <dt className="text-base text-lg">{student.desired_course_code}</dt>
+                                            </div>
+                                            <div className="ml-auto">
+                                                <button className="text-md font-bold text-white bg-gray-600 px-4 py-2 hover:bg-gray-400 rounded-md flex items-center justify-center shadow-lg" onClick={() => handleToggleExpand(studentIndex)}>
+                                                    {showAllCourses && selectedStudentIndex === studentIndex ? <>&#8592;</> : 'Smjerovi'}
                                                 </button>
-                                            </Link>
+                                            </div>
                                         </div>
-                                    ))}
-                            </>
-                        )}
-                    </dl>
-                </div>
+                                        {showAllCourses &&
+                                            selectedStudentIndex === studentIndex &&
+                                            Object.values(student.courses_short_statistics)
+                                                .sort((a, b) => b.total_points - a.total_points)
+                                                .map((course, courseIndex) => (
+                                                    <div key={courseIndex} className={` p-4 my-2 border  border-gray-300 ${course.course_code === student.desired_course_code ? 'bg-gray-200 border-gray-900' : 'bg-gray-100'}`}>
+                                                        <div className="flex items-center">
+                                                            <div className="ml-5 mr-10">
+                                                                <dt className="text-md  text-gray-700">{student.pupil_name} {hasDuplicateNames && `(${student.pupil_guardian_name})`} {student.pupil_last_name}</dt>
+                                                            </div>
+                                                            <div className="flex-grow text-center">
+                                                                <dt className="text-md  text-gray-700">1</dt>
+                                                            </div>
+                                                            <div className="flex-grow text-center">
+                                                                <dt className="text-base text-md  text-gray-700">{course.course_code}</dt>
+                                                            </div>
+                                                            <div className="text-base ml-auto">
+                                                                <Link href={`/home/${course.course_code}/${student.pupil_id}`} passHref>
+                                                                    <button className="text-sm font-bold text-white bg-gray-600 px-4 py-2 hover:bg-gray-400 rounded-md flex items-center justify-center shadow-lg mt-2 sm:mt-0">
+                                                                        Detalji
+                                                                    </button>
+                                                                </Link>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                    </div>
+                                );
+                            })}
+                        </dl>
+                    </div>
+                ) : (
+                    <p className="flex-grow text-center font-bold text-red-500">{error}</p>
+                )}
             </div>
         </div>
     );
-};
+}
 
 export default ListStudents;

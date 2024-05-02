@@ -4,6 +4,7 @@ import { useRouter } from 'next/router';
 import GradePage from '../../../../src/components/user/gradePage';
 import { ChevronLeftIcon } from '@heroicons/react/24/outline';
 import StudentAcknowledgments from '../../../../src/components/user/studentAcknowledgments'
+import StudentTransition from '../../../../src/components/user/studentTransition';
 
 
 const EditPage = (props) => {
@@ -16,7 +17,7 @@ const EditPage = (props) => {
     const handleTabNavigation = (e, tab) => {
         if (e.key === "Tab") {
             e.preventDefault();
-            const tabs = ["editStudent", "sixthGrade", "seventhGrade", "eightGrade", "ninthGrade", "studentAcknowledgments"];
+            const tabs = ["editStudent", "sixthGrade", "seventhGrade", "eightGrade", "ninthGrade", "studentAcknowledgments", "studentTransition"];
             const currentIndex = tabs.indexOf(selectedTab);
             let nextIndex = currentIndex + 1;
             if (nextIndex >= tabs.length) {
@@ -73,6 +74,12 @@ const EditPage = (props) => {
                                 onClick={() => setSelectedTab("studentAcknowledgments")}
                                 onKeyDown={(e) => handleTabNavigation(e, "studentAcknowledgments")}
                             >Priznanja</button>
+                            <button
+                                tabIndex={selectedTab === "studentTransition" ? "0" : "-1"}
+                                className={`focus:outline-none text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium ${selectedTab === "studentTransition" ? "bg-gray-900" : ""}`}
+                                onClick={() => setSelectedTab("studentTransition")}
+                                onKeyDown={(e) => handleTabNavigation(e, "studentTransition")}
+                            >Tranzicija</button>
                         </div>
                         <div className="flex items-center">
                             <button
@@ -91,6 +98,7 @@ const EditPage = (props) => {
                 {selectedTab === "eightGrade" && idExists && <GradePage studentId={id} setSelectedPage={setSelectedTab} selectedTab={selectedTab} />}
                 {selectedTab === "ninthGrade" && idExists && <GradePage studentId={id} setSelectedPage={setSelectedTab} selectedTab={selectedTab} />}
                 {selectedTab === "studentAcknowledgments" && idExists && <StudentAcknowledgments studentId={id} setSelectedPage={setSelectedTab} />}
+                {selectedTab === "studentTransition" && idExists && <StudentTransition studentId={id} setSelectedPage={setSelectedTab} />}
             </div>
         </div>
     );

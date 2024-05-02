@@ -2,17 +2,18 @@ import { useEffect, useState } from "react";
 import Url from "../../../constants";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
+import useIsMobile from "./useIsMobile";
 
 const ListCoursesHome = () => {
     const { data } = useSession();
     const [courses, setCourses] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const isMobile = useIsMobile(); // Use custom hook to detect mobile devices
 
     async function getAllCourses() {
         try {
-            const resp = await fetch(`${Url}api/sec-schools/school-list/1/courses/`, {
-            });
+            const resp = await fetch(`${Url}api/sec-schools/school-list/1/courses/`, {});
             const coursesData = await resp.json();
             setCourses(coursesData);
             setLoading(false);
@@ -37,20 +38,22 @@ const ListCoursesHome = () => {
                 <div className="border-t border-gray-200 px-4 py-5 sm:p-0">
                     <dl className="sm:divide-y sm:divide-gray-200">
                         {courses.map((item, index) => (
-                            <div key={index} className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5 sm:px-6">
-                                {item && item._course_code && (
-                                    <dt className="text-sm font-medium text-gray-500 first-letter:capitalize">
-                                        {index + 1}.{' '}
-                                        <Link href={`/home/${item._course_code.toUpperCase()}`}>
-                                            <span style={{ textDecoration: 'underline', cursor: 'pointer' }}>{item.course_name}</span>
-                                        </Link>
-                                    </dt>
-                                )}
-                                {item && item._course_code && (
-                                    <>
-                                        <dd className="ml-20 mt-1 text-sm text-gray-900 sm:col-span-1 sm:mt-0">Trajanje: {item.course_duration}. godine</dd>
-                                    </>
-                                )}
+                            <div key={index} className="py-4">
+                                <div className={isMobile ? "flex flex-col" : "sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5 sm:px-6"}>
+                                    {item && item._course_code && (
+                                        <div className={isMobile ? "mb-2" : "sm:col-span-2"}>
+                                            <Link href={`/home/${item._course_code.toUpperCase()}`}>
+                                                <span className="underline cursor-pointer text-gray-700">{item.course_name}</span>
+                                            </Link>
+                                        </div>
+                                    )}
+                                    {item && item._course_code && isMobile && (
+                                        <div className="text-sm text-gray-900">Trajanje: {item.course_duration} godine</div>
+                                    )}
+                                    {item && item._course_code && !isMobile && (
+                                        <div className="ml-20 mt-1 text-sm text-gray-900">Trajanje: {item.course_duration} godine</div>
+                                    )}
+                                </div>
                             </div>
                         ))}
                     </dl>

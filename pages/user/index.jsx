@@ -30,6 +30,7 @@ const User = (props) => {
         <div className="w-4/5">
           {selectedPage === "listStudents" && <ListStudents />}
           {selectedPage === "newStudent" && <NewStudents setSelectedPage={setSelectedPage} />}
+          {selectedPage === "studentTransition" && <NewStudents setSelectedPage={setSelectedPage} />}
         </div>
       </div>
     </Layout>

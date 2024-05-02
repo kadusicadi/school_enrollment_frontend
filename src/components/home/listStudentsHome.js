@@ -2,6 +2,7 @@ import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import Url from "../../../constants";
 import Link from "next/link";
+import useIsMobile from "./useIsMobile";
 
 const ListStudents = () => {
     const { data } = useSession();
@@ -11,6 +12,7 @@ const ListStudents = () => {
     const [error, setError] = useState('');
     const [showAllCourses, setShowAllCourses] = useState(false);
     const [selectedStudentIndex, setSelectedStudentIndex] = useState(null);
+    const isMobile = useIsMobile();
 
     const getStudentPoints = async (name) => {
         try {
@@ -102,7 +104,31 @@ const ListStudents = () => {
                                 const hasDuplicateNames = studentsData.filter(s => s.pupil_name === student.pupil_name && s.pupil_last_name === student.pupil_last_name).length > 1;
 
                                 return (
-                                    <div key={studentIndex} className="rounded-md p-4 my-2">
+                                    <div key={studentIndex} className="rounded-md p-1 my-2">
+                                        {isMobile && (
+                                            <div className="flex items-start mb-1">
+                                                <div className="flex-grow">
+                                                    <div>
+                                                        <dt className="text-base text-lg">{student.pupil_name}</dt>
+                                                        <dt className="text-base text-lg">{hasDuplicateNames && `(${student.pupil_guardian_name})`} {student.pupil_last_name}</dt>
+                                                    </div>
+                                                </div>
+                                                <div className="mr-4">
+                                                    <div className="text-base font-bold mr-5">Pozicija:</div>
+                                                    <dt className="text-base text-lg ml-4">1</dt>
+                                                </div>
+                                                <div className="flex-grow mr-4">
+                                                    <div className="text-base font-bold">Smjer:</div>
+                                                    <dt className="text-base text-lg">{student.desired_course_code}</dt>
+                                                </div>
+                                                <div>
+                                                    <button className="mt-2 text-sm font-bold text-white bg-gray-600 px-3 py-1 hover:bg-gray-400 rounded-md flex items-center justify-center shadow-lg" onClick={() => handleToggleExpand(studentIndex)}>
+                                                        {showAllCourses && selectedStudentIndex === studentIndex ? <>&#8592;</> : 'Smjerovi'}
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        )}
+                                        {!isMobile && (
                                         <div className="flex items-start mb-3">
                                             <div className="ml-7 flex-grow">
                                                 <div className="text-base font-bold">Ime i prezime:</div>
@@ -123,25 +149,45 @@ const ListStudents = () => {
                                                 </button>
                                             </div>
                                         </div>
+                                        )}
                                         {showAllCourses &&
                                             selectedStudentIndex === studentIndex &&
                                             Object.values(student.courses_short_statistics)
                                                 .sort((a, b) => b.total_points - a.total_points)
                                                 .map((course, courseIndex) => (
-                                                    <div key={courseIndex} className={` p-4 my-2 border  border-gray-300 ${course.course_code === student.desired_course_code ? 'bg-gray-200 border-gray-900' : 'bg-gray-100'}`}>
+                                                    <div key={courseIndex} className={`p-4 my-2 border  border-gray-300 ${course.course_code === student.desired_course_code ? 'bg-gray-200 border-gray-900' : 'bg-gray-100'}`}>
                                                         <div className="flex items-center">
-                                                            <div className="ml-5 mr-10">
-                                                                <dt className="text-md  text-gray-700">{student.pupil_name} {hasDuplicateNames && `(${student.pupil_guardian_name})`} {student.pupil_last_name}</dt>
-                                                            </div>
-                                                            <div className="flex-grow text-center">
-                                                                <dt className="text-md  text-gray-700">1</dt>
-                                                            </div>
-                                                            <div className="flex-grow text-center">
-                                                                <dt className="text-base text-md  text-gray-700">{course.course_code}</dt>
-                                                            </div>
+                                                            {isMobile && (
+                                                                <>
+                                                                    <div className="mr-12">
+                                                                        <div className="text-md text-gray-700">{student.pupil_name}</div>
+                                                                        <div className="text-md text-gray-700">{hasDuplicateNames && `(${student.pupil_guardian_name})`} {student.pupil_last_name}</div>
+                
+                                                                    </div>
+                                                                    <div className="mr-14">
+                                                                        <div className="text-md text-gray-700">1</div>
+                                                                    </div>
+                                                                    <div className="flex-grow mr-3">
+                                                                        <div className="text-md text-gray-700">{student.desired_course_code}</div>
+                                                                    </div>
+                                                                </>
+                                                            )}
+                                                            {!isMobile && (
+                                                                <>
+                                                                    <div className="ml-5 mr-10">
+                                                                        <dt className="text-md  text-gray-700">{student.pupil_name} {hasDuplicateNames && `(${student.pupil_guardian_name})`} {student.pupil_last_name}</dt>
+                                                                    </div>
+                                                                    <div className="text-center ml-20 mr-20" style={{ minWidth: '11rem' }}>
+                                                                        <dt className="text-md  text-gray-700">1</dt>
+                                                                    </div>
+                                                                    <div className="flex-grow text-center">
+                                                                        <dt className="text-base text-md  text-gray-700">{course.course_code}</dt>
+                                                                    </div>
+                                                                </>
+                                                            )}
                                                             <div className="text-base ml-auto">
                                                                 <Link href={`/home/${course.course_code}/${student.pupil_id}`} passHref>
-                                                                    <button className="text-sm font-bold text-white bg-gray-600 px-4 py-2 hover:bg-gray-400 rounded-md flex items-center justify-center shadow-lg mt-2 sm:mt-0">
+                                                                    <button className={`text-sm font-bold text-white bg-gray-600 px-3 py-1 hover:bg-gray-400 rounded-md flex items-center justify-center shadow-lg mt-2 sm:mt-0 ${isMobile ? 'px-2 py-1' : 'px-4 py-2'}`}>
                                                                         Detalji
                                                                     </button>
                                                                 </Link>

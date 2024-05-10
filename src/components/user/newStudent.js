@@ -90,6 +90,49 @@ const NewStudents = ({ setSelectedPage }) => {
       <div className="flex flex-col">
         <h1 className="text-2xl font-semibold mb-3">Dodavanje novog učenika</h1>
         <form onSubmit={handleSubmit(onSubmit)}>
+        {school && (
+            <>
+              <label
+                htmlFor="shool"
+                className="block text-sm font-bold mb-2 mt-4"
+              >
+                Škola
+              </label>
+              <div className="relative">
+                <input
+                  className="border rounded w-full py-2 px-3"
+                  type="text"
+                  disabled
+                  value={school.school_name}
+                  {...register("school_id")}
+                />
+              </div>
+            </>
+          )}
+          {courses && (
+            <>
+              <label
+                htmlFor="courses"
+                className="block text-sm font-bold mb-2 mt-4"
+              >
+                Smjer
+              </label>
+              <div className="relative">
+                <select
+                  className="border rounded w-full py-2 px-3"
+                  {...register("course_id")}
+                >
+                  {courses.map((item) => {
+                    return (
+                      <option key={item._course_code} value={item._course_code}>
+                        {item.course_name}
+                      </option>
+                    );
+                  })}
+                </select>
+              </div>
+            </>
+          )}
           <label
             htmlFor="primary_school"
             className="block text-sm font-bold mb-2 mt-4"
@@ -113,12 +156,21 @@ const NewStudents = ({ setSelectedPage }) => {
           <input
             className="border rounded w-full py-2 px-3"
             type="text"
-            placeholder="Ukucajte ime učenika"
+            placeholder="Unesite ime učenika"
             {...register("name", { required: "Polje je obavezno!" })}
           />
           {errors.name && (
             <p className="text-red-500 italic">{errors.name?.message}</p>
           )}
+          <label htmlFor="middle_name" className="block text-sm font-bold mb-2 mt-4">
+            Srednje ime
+          </label>
+          <input
+            className="border rounded w-full py-2 px-3"
+            type="text"
+            placeholder="Unesite srednje ime učenika (nije obavezno)"
+            {...register("middle_name")}
+          />
           <label
             htmlFor="last_name"
             className="block text-sm font-bold mb-2 mt-4"
@@ -128,7 +180,7 @@ const NewStudents = ({ setSelectedPage }) => {
           <input
             className="border rounded w-full py-2 px-3"
             type="text"
-            placeholder="Ukucajte prezime učenika"
+            placeholder="Unesite prezime učenika"
             {...register("last_name", { required: "Polje je obavezno!" })}
           />
           {errors.last_name && (
@@ -137,12 +189,13 @@ const NewStudents = ({ setSelectedPage }) => {
           <label htmlFor="gender" className="block text-sm font-bold mb-2 mt-4">
             Spol
           </label>
-          <input
+          <select
             className="border rounded w-full py-2 px-3"
-            type="text"
-            placeholder="Unesite spol"
             {...register("gender", { required: "Polje je obavezno!" })}
-          />
+          >
+            <option value="M">Muško</option>
+            <option value="F">Žensko</option>
+          </select>
           {errors.gender && (
             <p className="text-red-500 italic">{errors.gender?.message}</p>
           )}
@@ -227,26 +280,18 @@ const NewStudents = ({ setSelectedPage }) => {
           <input
             className="border rounded w-full py-2 px-3"
             type="email"
-            placeholder="Unesite email staratelja"
-            {...register("guardian_email", { required: "Polje je obavezno!" })}
+            placeholder="Unesite email staratelja (nije obavezno)"
+            {...register("guardian_email")}
           />
-          {errors.guardian_email && (
-            <p className="text-red-500 italic">
-              {errors.guardian_email?.message}
-            </p>
-          )}
           <label htmlFor="email" className="block text-sm font-bold mb-2 mt-4">
             E-mail učenika
           </label>
           <input
             className="border rounded w-full py-2 px-3"
             type="email"
-            placeholder="Unesite email učenika"
-            {...register("email", { required: "Polje je obavezno!" })}
+            placeholder="Unesite email učenika (nije obavezno)"
+            {...register("email")}
           />
-          {errors.email && (
-            <p className="text-red-500 italic">{errors.email?.message}</p>
-          )}
           <label
             htmlFor="special_case"
             className="block text-sm font-bold mb-2 mt-4"
@@ -266,55 +311,10 @@ const NewStudents = ({ setSelectedPage }) => {
               {errors.special_case?.message}
             </p>
           )}
-
-          {school && (
-            <>
-              <label
-                htmlFor="shool"
-                className="block text-sm font-bold mb-2 mt-4"
-              >
-                Škola
-              </label>
-              <div className="relative">
-                <input
-                  className="border rounded w-full py-2 px-3"
-                  type="text"
-                  disabled
-                  value={school.school_name}
-                  {...register("school_id")}
-                />
-              </div>
-            </>
-          )}
-          {courses && (
-            <>
-              <label
-                htmlFor="courses"
-                className="block text-sm font-bold mb-2 mt-4"
-              >
-                Smjer
-              </label>
-              <div className="relative">
-                <select
-                  className="border rounded w-full py-2 px-3"
-                  {...register("course_id")}
-                >
-                  {courses.map((item) => {
-                    return (
-                      <option key={item._course_code} value={item._course_code}>
-                        {item.course_name}
-                      </option>
-                    );
-                  })}
-                </select>
-              </div>
-            </>
-          )}
-
           <input
             type="submit"
             value="Prijava"
-            className="border rounded w-full py-2 px-3 mt-4 cursor-pointer"
+            className="border rounded w-full py-2 px-3 mt-4 cursor-pointer bg-gray-300 text-gray-700 hover:bg-gray-400 transition-colors shadow-lg mr-2"
           />
         </form>
       </div>

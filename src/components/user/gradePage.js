@@ -8,6 +8,7 @@ const GradePage = ({ studentId, setSelectedPage, selectedTab }) => {
   const [gradeSubjects, setGradeSubjects] = useState([]);
   const [classId, setClassId] = useState('');
   const [existingScores, setExistingScores] = useState([]);
+  const [isPut, setIsPut] = useState(false);
 
   // Function to map the current tab to the next tab
   const getNextTab = (currentTab) => {
@@ -15,7 +16,7 @@ const GradePage = ({ studentId, setSelectedPage, selectedTab }) => {
       sixthGrade: 'seventhGrade',
       seventhGrade: 'eightGrade',
       eightGrade: 'ninthGrade',
-      ninthGrade: null, // No next tab for ninth grade
+      ninthGrade: 'studentAcknowledgments',
     };
     return tabToGradeMap[currentTab];
   };
@@ -29,6 +30,7 @@ const GradePage = ({ studentId, setSelectedPage, selectedTab }) => {
       });
       // if the response status is 200;
       if (response.status === 200) {
+        setIsPut(true);
         const responseData = await response.json();
         const tabToGradeMap = {
           sixthGrade: 'VI',
@@ -58,7 +60,8 @@ const GradePage = ({ studentId, setSelectedPage, selectedTab }) => {
           setGradeSubjects([...courseCodes]);
       // if the response status is 404;
       } else if (response.status === 404) {
-        // If there are no socres entered we fetch the courses;
+        setIsPut(false);
+        // If there are no scores entered we fetch the courses;
         const data = await response.json();
         const courseCodes = data.courses.data;
         setClassId(data.class_id);
@@ -99,7 +102,6 @@ const GradePage = ({ studentId, setSelectedPage, selectedTab }) => {
           });
         }
       });
-
       if (existingScores.length === 0) {
         // If there are no existing scores we need to add them with POST;
         await fetch(`${Url}api/sec-students/student-list/primary-school/class/${grade}/student/${studentId}/`, {
@@ -110,7 +112,13 @@ const GradePage = ({ studentId, setSelectedPage, selectedTab }) => {
           },
           body: JSON.stringify(courses),
         });
-        console.log('New scores added.');
+      // After submiting we navigate to the next tab AKA grade;
+      const nextTab = getNextTab(selectedTab);
+      if (nextTab) {
+        setSelectedPage(nextTab);
+      } else {
+        setSelectedPage('editStudent');
+      }
       } else {
         const updatedScores = existingScores.map(score => ({
           ...score,
@@ -125,14 +133,6 @@ const GradePage = ({ studentId, setSelectedPage, selectedTab }) => {
           },
           body: JSON.stringify(updatedScores),
         });
-        console.log('Scores updated.');
-      }
-      // After submiting we navigate to the next tab AKA grade;
-      const nextTab = getNextTab(selectedTab);
-      if (nextTab) {
-        setSelectedPage(nextTab);
-      } else {
-        setSelectedPage('editStudent');
       }
     } catch (e) {
       console.error('Error submitting grades:', e);
@@ -161,7 +161,7 @@ const GradePage = ({ studentId, setSelectedPage, selectedTab }) => {
     }
   };
 
-  return <GradeForm onSubmit={handleSubmit} onDelete={handleDeleteGrade} classId={classId} subjects={gradeSubjects} pupilId={studentId} existingScores={existingScores} />;
+  return <GradeForm onSubmit={handleSubmit} onDelete={handleDeleteGrade} classId={classId} subjects={gradeSubjects} pupilId={studentId} existingScores={existingScores} setIsPut={isPut} />;
 };
 
 export default GradePage;

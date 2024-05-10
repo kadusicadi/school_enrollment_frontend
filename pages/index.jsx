@@ -34,7 +34,7 @@ const Home = (props) => {
               }`}
             onClick={() => setSelectedPage("listStudentsHome")}
           >
-            Lista učenika
+            Prikaz učenika
           </button>
           <button
             className={`px-6 py-2 rounded-lg text-white font-semibold ${selectedPage === "listCoursesHome" ? "bg-gray-600" : "bg-gray-500"

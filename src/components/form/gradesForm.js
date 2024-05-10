@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import ConfirmationModal from '../delete/confirmationModal';
 
-const GradeForm = ({ onSubmit, onDelete, classId, subjects, pupilId, existingScores }) => {
+const GradeForm = ({ onSubmit, onDelete, classId, subjects, pupilId, existingScores, setIsPut }) => {
   const {
     register,
     handleSubmit,
@@ -11,16 +11,35 @@ const GradeForm = ({ onSubmit, onDelete, classId, subjects, pupilId, existingSco
     clearErrors,
     setValue,
   } = useForm();
-
+  
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showConfirmationModal, setShowConfirmationModal] = useState(false);
 
   const showDeleteForm = () => {
     setShowDeleteModal(true);
   }
+
   const handleDelete = () => {
-    onDelete()
+    subjects.forEach(subject => {
+      localStorage.removeItem(`${classId}-${subject}-${pupilId}`);
+    });
+    subjects.forEach(subject => {
+      setValue(subject, '');
+    });
+    onDelete();
   };
 
+  const handleFormSubmit = async () => {
+    if (setIsPut) {
+      setShowConfirmationModal(true);
+    } else {
+      try {
+        await handleSubmit(onSubmit)();
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  };
   // Here we are checking if the grade is between 2 and 5 and it must be a number;
   const validateGrade = (value, fieldName) => {
     const grade = parseInt(value);
@@ -52,17 +71,17 @@ const GradeForm = ({ onSubmit, onDelete, classId, subjects, pupilId, existingSco
     }
   };
 
-  // Effect hook to save grades to local storage
+  // Effect hook to save grades to local storage;
   useEffect(() => {
     subjects.forEach(subject => {
       const savedGrade = localStorage.getItem(`${classId}-${subject}-${pupilId}`);
       if (savedGrade) {
-        // If grade exists in local storage, set it in the form
+        // If grade exists in local storage, set it in the form;
         setValue(subject, savedGrade);
       }
     });
   
-    // Set existing scores in the form fields
+    // Set existing scores in the form fields;
     existingScores.forEach(score => {
       if (score.class_id === classId) {
         setValue(score.course_code, score.score.toString());
@@ -70,16 +89,16 @@ const GradeForm = ({ onSubmit, onDelete, classId, subjects, pupilId, existingSco
     });
   }, [classId, subjects, setValue, existingScores, pupilId]);
 
-  // Function to save grade to local storage
+  // Function to save grade to local storage;
   const saveGradeToLocalStorage = (fieldName, value) => {
-    localStorage.setItem(`${classId}-${fieldName}-${pupilId}`, value);
+      localStorage.setItem(`${classId}-${fieldName}-${pupilId}`, value);
   };
 
   return (
     <div className="flex justify-center items-start min-h-screen bg-gray-100 bg-opacity-100">
       <div className="bg-white p-8 rounded-lg shadow-lg mt-12 mb-12 w-full max-w-3xl">
         <h1 className="text-4xl font-bold mb-8 text-center text-gray-700">Unos predmeta za {classId} razred:</h1>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <form className="space-y-4">
           <div className="grid grid-cols-3 gap-4">
             {subjects.map((subject, index) => (
               <div key={subject} className="flex flex-col mb-4">
@@ -119,8 +138,9 @@ const GradeForm = ({ onSubmit, onDelete, classId, subjects, pupilId, existingSco
                     </div>
                     <div className="flex justify-center">
                       <input
-                        type="submit"
+                        type="button"
                         value="Sačuvaj"
+                        onClick={handleFormSubmit}
                         className="w-full md:w-40 bg-gray-300 text-gray-700 rounded-md px-4 py-2 hover:bg-gray-400 transition-colors shadow-lg"
                       />
                       {existingScores.length > 0 && (
@@ -144,6 +164,16 @@ const GradeForm = ({ onSubmit, onDelete, classId, subjects, pupilId, existingSco
             setShowDeleteModal(false);
           }}
           onCancel={() => setShowDeleteModal(false)}
+        />
+      )}
+      {showConfirmationModal && (
+        <ConfirmationModal
+          message={`Da li ste sigurni da želite ažurirati ocjene za ${classId} razred?`}
+          onConfirm={() => {
+            handleSubmit(onSubmit)();
+            setShowConfirmationModal(false);
+          }}
+          onCancel={() => setShowConfirmationModal(false)}
         />
       )}
       </div>

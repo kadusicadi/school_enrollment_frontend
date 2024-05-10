@@ -17,7 +17,7 @@ const AcknowledgmentForm = ({ studentId }) => {
 
     async function fetchStudentData() {
         try {
-            const resp = await fetch(`${Url}/api/sec-students/student/${studentId}/acknowledgments/`, {
+            const resp = await fetch(`${Url}api/sec-students/student/${studentId}/acknowledgments/`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${data.user.token}`
@@ -47,7 +47,7 @@ const AcknowledgmentForm = ({ studentId }) => {
                 console.error('Takmičenje već postoji za ovog učenika.');
                 return;
             }
-            const resp = await fetch(`${Url}/api/sec-students/student/${studentId}/acknowledgments/`, {
+            const resp = await fetch(`${Url}api/sec-students/student/${studentId}/acknowledgments/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

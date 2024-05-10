@@ -36,10 +36,19 @@ const ListStudentsPerCourse = ({ courseId }) => {
         setSearchInput(event.target.value);
     };
 
-    filteredStudents = allStudents.filter(student =>
-        student.name.toLowerCase().includes(searchInput.toLowerCase()) ||
-        student.last_name.toLowerCase().includes(searchInput.toLowerCase())
-    );
+    var filteredStudents = allStudents.filter(student => {
+        const fullName = `${student.last_name} ${student.name}`.toLowerCase();
+        const reversedFullName = `${student.name} ${student.last_name}`.toLowerCase();
+        const searchQuery = searchInput.toLowerCase();
+    
+        if (fullName.includes(searchQuery) || reversedFullName.includes(searchQuery)) {
+          return true;
+        }
+    
+        const lastNameMatch = student.last_name.toLowerCase().includes(searchQuery);
+        const firstNameMatch = student.name.toLowerCase().includes(searchQuery);
+        return lastNameMatch || firstNameMatch;
+      });
 
     const sortedStudents = [...filteredStudents].sort((a, b) => {
         if (a.status !== 'regular' && b.status === 'regular') {
@@ -64,7 +73,7 @@ const ListStudentsPerCourse = ({ courseId }) => {
                     <div className="flex items-center justify-between">
                         <input
                             type="text"
-                            placeholder="Pretraga"
+                            placeholder="Pretraži ime i prezime"
                             className="ml-3 px-3 py-1 border border-gray-300 rounded-md focus:outline-none"
                             value={searchInput}
                             onChange={handleSearchInputChange}
@@ -103,11 +112,17 @@ const ListStudentsPerCourse = ({ courseId }) => {
             {sortedStudents.length > 0 ? (
                 <div className="border-t border-gray-200 px-4 py-5 sm:p-0">
                     <dl className="sm:divide-y sm:divide-gray-200">
+                        {!isMobile && (
+                        <div className="mb-3 mt-3 flex">
+                            <dt className="text-gray-700 ml-5 font-bold min-w-[19rem]">Ime i prezime</dt>
+                            <dt className="text-gray-700 font-bold min-w-[12rem]">Bodovi</dt>
+                        </div>
+                        )}
                         {sortedStudents.map((item, index) => (
                             <div key={index} className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5 sm:px-6">
                                 <div className="text-sm font-medium text-gray-500 first-letter:capitalize">
                                         <div>
-                                            {index + 1}. {item.name} {item.last_name}
+                                            {index + 1}. {item.name} {item.last_name}{item.status !== 'regular' && '*'}
                                         </div>
                                 </div>
                                 {isMobile && (
@@ -124,7 +139,7 @@ const ListStudentsPerCourse = ({ courseId }) => {
                                 )}
                                 {!isMobile && (
                                     <div className="mt-1 text-sm text-gray-900 sm:col-span-1 sm:mt-0">
-                                        Bodovi: {item.total_points}
+                                        {item.total_points}
                                     </div>
                                 )}
                                 {!isMobile && (
@@ -139,7 +154,11 @@ const ListStudentsPerCourse = ({ courseId }) => {
                     </dl>
                 </div>
             ) : (
-                <p className="text-red-500 font-bold mt-3">Trenutno niko nije upisan.</p>
+                <div className="border-t border-gray-200 px-4 py-5 sm:p-0">
+                    <div className="text-center font-bold text-red-500 mt-4">
+                        {searchInput.trim() === "" ? "Nema upisanih učenika na ovom smjeru." : "Birani učenik nije upisan na ovaj smjer."}
+                    </div>
+                </div>
             )}
         </div>
     );
@@ -148,7 +167,7 @@ const ListStudentsPerCourse = ({ courseId }) => {
 // Function to retrieve all students
 export const getAllStudents = async (courseId) => {
     try {
-        const resp = await fetch(`${Url}api/sec-students/student-list/1/${courseId}/1/5/`, {
+        const resp = await fetch(`${Url}api/sec-students/student-list/1/${courseId}/1/8/`, {
             method: 'GET',
         });
         const studentsData = await resp.json();

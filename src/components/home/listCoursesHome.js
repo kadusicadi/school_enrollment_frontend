@@ -33,6 +33,9 @@ const ListCoursesHome = () => {
 
     return (
         <div>
+            <div className="flex justify-center" style={{ paddingBottom: '40px' }}>
+                <h1 className="text-3xl font-semibold text-center">Dobrodošli na upis učenika u Tehničku školu 2024/2025</h1>
+            </div>
             <div className="flex flex-col">
                 <h1 className="text-2xl font-semibold mb-3 ml-3">Lista smjerova</h1>
                 <div className="border-t border-gray-200 px-4 py-5 sm:p-0">

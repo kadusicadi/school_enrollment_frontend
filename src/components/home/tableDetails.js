@@ -83,7 +83,15 @@ const TableDetails = ({ courseId }) => {
                     }
                 }
                 // Sorting the students by points;
-                studentsData.sort((a, b) => b.total - a.total); 
+                studentsData.sort((a, b) => {
+                    if (a.status !== 'regular' && b.status === 'regular') {
+                        return -1;
+                    } else if (a.status === 'regular' && b.status !== 'regular') {
+                        return 1;
+                    } else {
+                        return b.total - a.total;
+                    }
+                }); 
                 setStudents(studentsData);
             } catch (error) {
                 console.error('Error fetching students:', error);
@@ -143,7 +151,7 @@ const TableDetails = ({ courseId }) => {
                     {students.map((student, studentIndex) => (
                         <tr key={studentIndex}>
                             <td className="px-6 py-4 text-center whitespace-nowrap border-r border-gray-200">{studentIndex + 1}</td>
-                            {[`${student?.name} ${student?.last_name}`, student?.primary_school, ...(Object.values(student?.averageScores || {})), student?.sv, ...Object.values(student?.specialScores || {})
+                            {[`${student?.name} ${student?.last_name}${student.status !== 'regular' ? '*' : ''}`, student?.primary_school, ...(Object.values(student?.averageScores || {})), student?.sv, ...Object.values(student?.specialScores || {})
                                 .filter((score, index) => {
                                     const classCode = Object.keys(student?.specialScores || {})[index]?.split(" ")[0];
                                     return classCode === "VIII" || classCode === "IX";

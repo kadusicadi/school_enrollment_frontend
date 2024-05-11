@@ -42,11 +42,19 @@ const ListStudentsPerCourse = ({ courseId }) => {
     setSearchInput(event.target.value);
   };
 
-  let filteredStudents = allStudents.filter(
-    (student) =>
-      student.name.toLowerCase().includes(searchInput.toLowerCase()) ||
-      student.last_name.toLowerCase().includes(searchInput.toLowerCase())
-  );
+  var filteredStudents = allStudents.filter(student => {
+    const fullName = `${student.last_name} ${student.name}`.toLowerCase();
+    const reversedFullName = `${student.name} ${student.last_name}`.toLowerCase();
+    const searchQuery = searchInput.toLowerCase();
+
+    if (fullName.includes(searchQuery) || reversedFullName.includes(searchQuery)) {
+      return true;
+    }
+
+    const lastNameMatch = student.last_name.toLowerCase().includes(searchQuery);
+    const firstNameMatch = student.name.toLowerCase().includes(searchQuery);
+    return lastNameMatch || firstNameMatch;
+  });
 
   const sortedStudents = [...filteredStudents].sort((a, b) => {
     if (a.status !== "regular" && b.status === "regular") {
@@ -129,6 +137,12 @@ const ListStudentsPerCourse = ({ courseId }) => {
       {sortedStudents.length > 0 ? (
         <div className="border-t border-gray-200 px-4 py-5 sm:p-0">
           <dl className="sm:divide-y sm:divide-gray-200">
+          {!isMobile && (
+                        <div className="mb-3 mt-3 flex">
+                            <dt className="text-gray-700 ml-5 font-bold min-w-[19rem]">Ime i prezime</dt>
+                            <dt className="text-gray-700 font-bold min-w-[12rem]">Bodovi</dt>
+                        </div>
+                        )}
             {sortedStudents.map((item, index) => (
               <div
                 key={index}
@@ -136,7 +150,7 @@ const ListStudentsPerCourse = ({ courseId }) => {
               >
                 <div className="text-sm font-medium text-gray-500 first-letter:capitalize">
                   <div>
-                    {index + 1}. {item.name} {item.last_name}
+                  {index + 1}. {item.name} {item.last_name}{item.status !== 'regular' && '*'}
                   </div>
                 </div>
                 {isMobile && (

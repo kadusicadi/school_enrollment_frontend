@@ -77,7 +77,7 @@ const ListStudents = () => {
     return (
         <div>
             <div className="flex justify-center" style={{ paddingBottom: '40px' }}>
-                <h1 className="text-3xl font-semibold text-center">Dobrodošli na upis učenika u tehničku školu 2024/2025</h1>
+                <h1 className="text-3xl font-semibold text-center">Dobrodošli na upis učenika u Tehničku školu 2024/2025</h1>
             </div>
             <div className="flex flex-col">
                 <div className="mb-4">
@@ -96,6 +96,11 @@ const ListStudents = () => {
                             Prikaži
                         </button>
                     </div>
+                    <div className="mt-3 flex">
+                        <dt className={`${!isMobile ? 'text-gray-700 font-bold ml-10 min-w-[19rem]' : 'text-gray-700 font-bold ml-2 mr-8'}`}>Ime i prezime</dt>
+                        <dt className={`${!isMobile ? 'text-gray-700 font-bold min-w-[20rem]' : 'text-gray-700 font-bold mr-12'}`}>Pozicija</dt>
+                        <dt className={`text-gray-700 font-bold`}>Smjer</dt>
+                    </div>
                 </div>
                 {error === '' && studentsData && studentsData.map((student, studentIndex) => (
                     <div key={studentIndex} className="rounded-md">
@@ -106,7 +111,6 @@ const ListStudents = () => {
                             <div key={courseIndex} className={`p-4 my-2 border-2 border-gray-700 ${course.current_position < PupilLimit ? 'bg-green-100' : 'bg-red-100'}`}>
                                 <div className={`flex ${isMobile ? 'items-center' : 'items-start mb-1'}`}>
                                     <div className={`${!isMobile ? 'ml-5 mr-10' : 'mr-9'}`}>
-                                        <dt className="text-md text-gray-900">Ime i prezime:</dt>
                                         {isMobile && (
                                         <dt className="text-md font-bold text-gray-900">{`${student.pupil_name}`}</dt>
                                         )}
@@ -118,11 +122,9 @@ const ListStudents = () => {
                                         )}
                                     </div>
                                     <div className={`${!isMobile ? 'text-center ml-20 mr-20 min-w-[11rem]' : ''}`}>
-                                        <dt className="text-md text-gray-900">Pozicija:</dt>
                                         <dt className={`text-md font-bold text-gray-900 ${isMobile ? 'ml-5' : ''}`}>{course.current_position}</dt>
                                     </div>
                                     <div className={`flex-grow text-center ${isMobile ? 'ml-12' : 'ml-14'}`}>
-                                        <dt className="text-md text-gray-900">Smjer:</dt>
                                         <dt className="text-md font-bold text-gray-900">{course.course_code}</dt>
                                     </div>
                                     {isMobile && (

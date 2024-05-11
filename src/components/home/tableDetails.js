@@ -92,8 +92,29 @@ const TableDetails = ({ courseId }) => {
         }
       }
       // Sorting the students by points;
-      studentsData.sort((a, b) => b.total - a.total);
-      setStudents((prevStudents) => [...prevStudents, ...studentsData]);
+      studentsData.sort((a, b) => {
+        if (a.status !== 'regular' && b.status === 'regular') {
+            return -1;
+        } else if (a.status === 'regular' && b.status !== 'regular') {
+            return 1;
+        } else {
+            return b.total - a.total;
+        }
+    }); 
+    setStudents((prevStudents) => {
+      const mergedStudents = [...prevStudents, ...studentsData];
+      mergedStudents.sort((a, b) => {
+        if (a.status !== 'regular' && b.status === 'regular') {
+            return -1;
+        } else if (a.status === 'regular' && b.status !== 'regular') {
+            return 1;
+        } else {
+            return b.total - a.total;
+        }
+      });
+      return mergedStudents;
+
+    });
     } catch (error) {
       console.error("Error fetching students:", error);
     } finally {
@@ -225,7 +246,7 @@ const TableDetails = ({ courseId }) => {
                 {studentIndex + 1}
               </td>
               {[
-                `${student?.name} ${student?.last_name}`,
+                `${student?.name} ${student?.last_name}${student.status !== 'regular' ? '*' : ''}`,
                 student?.primary_school,
                 ...Object.values(student?.averageScores || {}),
                 student?.sv,

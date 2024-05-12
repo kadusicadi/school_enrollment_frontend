@@ -50,7 +50,8 @@ const EditStudent = ({ studentId }) => {
 
             if (resp.ok) {
                 console.log('Student updated successfully');
-                router.push('/user');
+                const redirectUrl = data.user.is_superuser ? '/admin' : '/user';
+                router.push(redirectUrl);
             } else {
                 console.error('Failed to update student');
             }

@@ -285,9 +285,11 @@ const TableDetails = ({ courseId }) => {
           <span>Učitaj još učenika</span>
         </div>
       ) : (
-        <div className="flex justify-center items-center h-10 rounded w-60 cursor-pointer border mt-20 bg-gray-800 text-white">
-          <span>Svi učenici su učitani</span>
-        </div>
+        students.length > 0 && (
+          <div className="flex justify-center items-center h-10 rounded w-60 cursor-pointer border mt-20 bg-gray-800 text-white">
+              <span>Svi učenici su učitani</span>
+          </div>
+      )
       )}
     </div>
   );

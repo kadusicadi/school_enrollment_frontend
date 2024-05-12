@@ -44,7 +44,7 @@ const ListStudents = () => {
             setLoading(false);
         }
     };
-    
+
     const handleInputChange = (event) => {
         setNameInput(event.target.value);
     };
@@ -95,11 +95,13 @@ const ListStudents = () => {
                             Prikaži
                         </button>
                     </div>
-                    <div className="mt-3 flex">
-                        <dt className={`${!isMobile ? 'text-gray-700 font-bold ml-10 min-w-[19rem]' : 'text-gray-700 font-bold ml-2 mr-8'}`}>Ime i prezime</dt>
-                        <dt className={`${!isMobile ? 'text-gray-700 font-bold min-w-[20rem]' : 'text-gray-700 font-bold mr-12'}`}>Pozicija</dt>
-                        <dt className={`text-gray-700 font-bold`}>Smjer</dt>
-                    </div>
+                    {studentsData && studentsData.length > 0 && (
+                     <div className="mt-3 flex">
+                         <dt className={`${!isMobile ? 'text-gray-700 font-bold ml-10 min-w-[19rem]' : 'text-gray-700 font-bold ml-2 mr-4'} ${isMobile ? 'text-sm' : ''}`}>Ime i prezime</dt>
+                         <dt className={`${!isMobile ? 'text-gray-700 font-bold min-w-[20rem]' : 'text-gray-700 font-bold mr-4'} ${isMobile ? 'text-sm' : ''}`}>Trenutna pozicija</dt>
+                         <dt className={`text-gray-700 font-bold ${isMobile ? 'text-sm' : ''}`}>Smjer</dt>
+                     </div>
+                 )}                 
                 </div>
                 {error === '' && studentsData && studentsData.map((student, studentIndex) => (
                     <div key={studentIndex} className="rounded-md">
@@ -109,12 +111,13 @@ const ListStudents = () => {
                         .map((course, courseIndex) => (
                             <div key={courseIndex} className={`p-4 my-2 border-2 border-gray-700 ${course.current_position < PupilLimit ? 'bg-green-100' : 'bg-red-100'}`}>
                                 <div className={`flex ${isMobile ? 'items-center' : 'items-start mb-1'}`}>
+                                    
                                     <div className={`${!isMobile ? 'ml-5 mr-10' : 'mr-9'}`}>
                                         {isMobile && (
-                                        <dt className="text-md font-bold text-gray-900">{`${student.pupil_name}`}</dt>
+                                        <dt className="text-sm font-bold text-gray-900">{`${student.pupil_name}`}</dt>
                                         )}
                                         {isMobile && (
-                                        <dt className="text-md font-bold text-gray-900">{`${studentsData.filter(s => s.pupil_name === student.pupil_name && s.pupil_last_name === student.pupil_last_name).length > 1 ? ` (${student.pupil_guardian_name})` : ''} ${student.pupil_last_name}`}</dt>
+                                        <dt className="text-sm font-bold text-gray-900">{`${studentsData.filter(s => s.pupil_name === student.pupil_name && s.pupil_last_name === student.pupil_last_name).length > 1 ? ` (${student.pupil_guardian_name})` : ''} ${student.pupil_last_name}`}</dt>
                                         )}
                                         {!isMobile && (
                                         <dt className="text-md font-bold text-gray-900">{`${student.pupil_name} ${studentsData.filter(s => s.pupil_name === student.pupil_name && s.pupil_last_name === student.pupil_last_name).length > 1 ? ` (${student.pupil_guardian_name})` : ''} ${student.pupil_last_name}`}</dt>
@@ -129,13 +132,13 @@ const ListStudents = () => {
                                     {isMobile && (
                                         <div className="text-base ml-auto">
                                             <div className="text-base flex items-center">
-                                                <button className={`text-sm font-bold text-white bg-gray-600 px-3 py-1 hover:bg-gray-400 rounded-md flex items-center justify-center shadow-lg mr-1 ${isMobile ? 'ml-6' : ''}`} onClick={() => handleToggleExpand(studentIndex)}>
+                                                <button className={`text-xs font-bold text-white bg-gray-600 px-3 py-1 hover:bg-gray-400 rounded-md flex items-center justify-center shadow-lg mr-1 ${isMobile ? 'ml-6' : ''}`} onClick={() => handleToggleExpand(studentIndex)}>
                                                     {showAllCourses && selectedStudentIndex === studentIndex ? 'Sakrij' : 'Komparacija'}
                                                 </button>
                                             </div>
                                             <div>
                                                 <Link href={`/home/${course.course_code}/${student.pupil_id}`} passHref>
-                                                    <button className={`text-sm font-bold text-white bg-gray-600 px-3 py-1 hover:bg-gray-400 rounded-md flex items-center justify-center shadow-lg ${isMobile ? 'px-2 py-1 ml-6 mt-1 ' : 'px-4 py-2'}`}>
+                                                    <button className={`text-xs font-bold text-white bg-gray-600 px-3 py-1 hover:bg-gray-400 rounded-md flex items-center justify-center shadow-lg ${isMobile ? 'px-2 py-1 ml-6 mt-1 ' : 'px-4 py-2'}`}>
                                                         Detalji
                                                     </button>
                                                 </Link>
@@ -167,10 +170,10 @@ const ListStudents = () => {
                                     <div className={`flex ${isMobile ? 'items-center' : 'items-start mb-1'}`}>
                                         <div className={`${!isMobile ? 'ml-5 mr-10' : 'mr-9'}`}>
                                             {isMobile && (
-                                            <dt className="text-md text-gray-700">{`${student.pupil_name}`}</dt>
+                                            <dt className="text-sm text-gray-700">{`${student.pupil_name}`}</dt>
                                             )}
                                             {isMobile && (
-                                            <dt className="text-md text-gray-700">{`${studentsData.filter(s => s.pupil_name === student.pupil_name && s.pupil_last_name === student.pupil_last_name).length > 1 ? ` (${student.pupil_guardian_name})` : ''} ${student.pupil_last_name}`}</dt>
+                                            <dt className="text-sm text-gray-700">{`${studentsData.filter(s => s.pupil_name === student.pupil_name && s.pupil_last_name === student.pupil_last_name).length > 1 ? ` (${student.pupil_guardian_name})` : ''} ${student.pupil_last_name}`}</dt>
                                             )}
                                             {!isMobile && (
                                             <dt className="text-md text-gray-700 mr-2">{`${student.pupil_name} ${studentsData.filter(s => s.pupil_name === student.pupil_name && s.pupil_last_name === student.pupil_last_name).length > 1 ? ` (${student.pupil_guardian_name})` : ''} ${student.pupil_last_name}`}</dt>

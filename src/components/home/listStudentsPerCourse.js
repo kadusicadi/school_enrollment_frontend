@@ -79,21 +79,21 @@ const ListStudentsPerCourse = ({ courseId }) => {
     <div>
       {isMobile ? (
         <div>
-          <div className="flex items-center justify-between mb-5">
-            <h1 className="ml-3 text-2xl font-semibold">
-              Lista učenika {courseId}
-            </h1>
-            <button
+          <button
               className="mr-3 mb-2 flex items-center px-2 py-1 boarder none"
               onClick={back}
             >
               <ChevronLeftIcon className="w-6 h-6 mr-1" />
             </button>
+          <div className="flex items-center justify-between mb-5">
+            <h1 className="ml-3 text-2xl font-semibold">
+              Lista učenika {courseId}
+            </h1>
           </div>
           <div className="flex items-center justify-between">
             <input
               type="text"
-              placeholder="Pretraga"
+              placeholder="Unesite ime i/ili prezime"
               className="ml-3 px-3 py-1 border border-gray-300 rounded-md focus:outline-none"
               value={searchInput}
               onChange={handleSearchInputChange}
@@ -107,6 +107,12 @@ const ListStudentsPerCourse = ({ courseId }) => {
         </div>
       ) : (
         <div className="flex flex-col">
+          <button
+                className="ml-3 mb-2 flex items-center px-2 py-1 boarder none"
+                onClick={back}
+              >
+                <ChevronLeftIcon className="w-6 h-6 mr-1" />
+              </button>
           <div className="flex items-center justify-between">
             <h1 className="ml-3 text-2xl font-semibold">
               Lista učenika {courseId}
@@ -119,17 +125,11 @@ const ListStudentsPerCourse = ({ courseId }) => {
               </Link>
               <input
                 type="text"
-                placeholder="Pretraga"
+                placeholder="Unesite ime i/ili prezime"
                 className="px-3 py-1 border border-gray-300 rounded-md focus:outline-none"
                 value={searchInput}
                 onChange={handleSearchInputChange}
               />
-              <button
-                className="ml-3 mb-2 flex items-center px-2 py-1 boarder none"
-                onClick={back}
-              >
-                <ChevronLeftIcon className="w-6 h-6 mr-1" />
-              </button>
             </div>
           </div>
         </div>

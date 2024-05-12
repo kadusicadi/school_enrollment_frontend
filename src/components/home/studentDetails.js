@@ -110,9 +110,12 @@ const StudentDetails = ({ studentId, courseId }) => {
 
     return (
         <div className="full-w overflow-x-auto">
+            <div className='flex'>
             <button onClick={() => router.push(`/home/${courseId}`)} className="flex items-center px-2 py-1 rounded-md hover:bg-gray-300 focus:outline-none">
-                <ChevronLeftIcon className="w-6 h-6 mr-10" /> <div className="font-bold text-gray-800">Smjer: {courseId}</div>
+                <ChevronLeftIcon className="w-6 h-6" />
             </button>
+            <div className="ml-2 mt-1 font-bold text-gray-800">Smjer: {courseId}</div>
+            </div>
             <table className="min-w-full border border-gray-200 mt-2">
                 <thead className="bg-gray-50">
                     <tr className="border-b border-gray-200">

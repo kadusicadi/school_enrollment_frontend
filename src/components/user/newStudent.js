@@ -71,7 +71,7 @@ const NewStudents = ({ setSelectedPage }) => {
         desired_course_A: dataVal.course_id,
       };
 
-      const store = await fetch(`${Url}api/sec-students/student-list/`, {
+      const store = await fetch(`${Url}api/sec-students/student-list/1/student`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${data.user.token}`,

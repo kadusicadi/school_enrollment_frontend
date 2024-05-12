@@ -143,13 +143,15 @@ const TableDetails = ({ courseId }) => {
 
   return (
     <div className="full-w overflow-x-auto">
+      <div className="flex">
       <button
         onClick={() => router.push(`/home/${courseId}`)}
         className="flex items-center px-2 py-1 rounded-md hover:bg-gray-300 focus:outline-none"
       >
-        <ChevronLeftIcon className="w-6 h-6 mr-10" />{" "}
-        <div className="font-bold text-gray-800">Smjer: {courseId}</div>
+        <ChevronLeftIcon className="w-6 h-6" />{" "}
       </button>
+      <div className="font-bold text-gray-800 ml-2 mt-1">Smjer: {courseId}</div>
+      </div>
       {session && (
         <PDFDownloadLink
           className="mt-2 w-40 bg-gray-300 text-gray-700 rounded-md px-4 py-2 hover:bg-gray-400 transition-colors shadow-lg mr-2 flex items-center justify-center"

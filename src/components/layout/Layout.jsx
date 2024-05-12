@@ -5,12 +5,6 @@ import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { useSession } from "next-auth/react";
 import { signOut, signIn } from "next-auth/react";
 
-const userc = {
-    name: 'Ismet',
-    email: 'i@ismet.ba',
-    imageUrl: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-}
-
 const navigation = [
     { name: 'Početna', href: '/', current: true },
     { name: 'User Panel', href: '/user', current: false },
@@ -75,20 +69,12 @@ export default function Layout({ children }) {
                                 </div>
                                 <div className="hidden md:block">
                                     <div className="ml-4 flex items-center md:ml-6">
-                                        {data?.user?.is_superuser && (
-                                            <Link
-                                                href="/auth/signup"
-                                                className="rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
-                                            >
-                                                <span className="">Register</span>
-                                            </Link>
-                                        )}
                                         {data?.user ? (
                                             <Menu as="div" className="relative ml-3">
                                                 <div>
                                                     <Menu.Button className="flex max-w-xs items-center rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
                                                         <span className="sr-only">Open user menu</span>
-                                                        <img className="h-8 w-8 rounded-full" src={userc.imageUrl} alt="" />
+                                                        <span className={classNames('text-gray-300 hover:text-white', 'px-3 py-2 rounded-md text-sm font-medium')}>{data.user.first_name}</span>
                                                     </Menu.Button>
                                                 </div>
                                                 <Transition
@@ -149,6 +135,34 @@ export default function Layout({ children }) {
                                 </div>
                                 <div className="-mr-2 flex md:hidden">
                                     {/* Mobile menu button */}
+                                    <div className="ml-10 flex items-baseline space-x-4">
+                                        {/* Display navigation links based on the teacher status */}
+                                        {status === "authenticated" && (
+                                            <>
+                                                <Link href="/" className={classNames('text-gray-300 hover:bg-gray-700 hover:text-white', 'px-3 py-2 rounded-md text-sm font-medium')}>
+                                                    Početna
+                                                </Link>
+                                                {/* If the teacher is not an admin it displays 'Nastavnik opcije'*/}
+                                                {!isAdmin && (
+                                                    <Link href="/user" className={classNames('text-gray-300 hover:bg-gray-700 hover:text-white', 'px-3 py-2 rounded-md text-sm font-medium')}>
+                                                        Nastavnik opcije
+                                                    </Link>
+                                                )}
+                                                {/* If the teacher is an admin it displays 'Admin opcije' */}
+                                                {isAdmin && (
+                                                    <Link href="/admin" className={classNames('text-gray-300 hover:bg-gray-700 hover:text-white', 'px-3 py-2 rounded-md text-sm font-medium')}>
+                                                        Admin opcije
+                                                    </Link>
+                                                )}
+                                            </>
+                                        )}
+                                        {/* Displays only 'Početna' for guests/anonymus users */}
+                                        {status !== "authenticated" && (
+                                            <Link href="/" className={classNames('text-gray-300 hover:bg-gray-700 hover:text-white', 'px-3 py-2 rounded-md text-sm font-medium')}>
+                                                Početna
+                                            </Link>
+                                        )}
+                                    </div>
                                 </div>
                             </div>
                         </div>

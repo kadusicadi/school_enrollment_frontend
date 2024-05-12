@@ -37,7 +37,19 @@ const ListCoursesHome = () => {
                 <h1 className="text-3xl font-semibold text-center">Dobrodošli na upis učenika u Tehničku školu 2024/2025</h1>
             </div>
             <div className="flex flex-col">
+                {isMobile && (
                 <h1 className="text-2xl font-semibold mb-3 ml-3">Lista smjerova</h1>
+                )}
+                {!isMobile && (
+                <div className="flex">
+                    <dt className="text-gray-700 ml-5 font-bold min-w-[37rem]">Smjerovi</dt>
+                    <dt className="text-gray-700 ml-5 font-bold">Trajanje</dt>
+                </div>
+                )}
+                {isMobile && (
+                <div className="flex">
+                </div>
+                )}
                 <div className="border-t border-gray-200 px-4 py-5 sm:p-0">
                     <dl className="sm:divide-y sm:divide-gray-200">
                         {courses.map((item, index) => (
@@ -54,7 +66,7 @@ const ListCoursesHome = () => {
                                         <div className="text-sm text-gray-900">Trajanje: {item.course_duration} godine</div>
                                     )}
                                     {item && item._course_code && !isMobile && (
-                                        <div className="ml-20 mt-1 text-sm text-gray-900">Trajanje: {item.course_duration} godine</div>
+                                        <div className="mt-1 text-sm text-gray-900">{item.course_duration} godine</div>
                                     )}
                                 </div>
                             </div>

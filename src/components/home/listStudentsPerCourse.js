@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import { ChevronLeftIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import useIsMobile from "./useIsMobile";
+import useIsTablet from "./useIsTablet";
 
 var filteredStudents;
 var allStudents;
@@ -17,6 +18,7 @@ const ListStudentsPerCourse = ({ courseId }) => {
   const [noPerPage, setNoPerPage] = useState(10);
   const [totalRecords, setTotalRecord] = useState(0);
   const isMobile = useIsMobile();
+  const isTablet = useIsTablet();
 
   async function getStudents(courseId) {
     try {
@@ -137,12 +139,18 @@ const ListStudentsPerCourse = ({ courseId }) => {
       {sortedStudents.length > 0 ? (
         <div className="border-t border-gray-200 px-4 py-5 sm:p-0">
           <dl className="sm:divide-y sm:divide-gray-200">
-          {!isMobile && (
+          {!isMobile && !isTablet && (
                         <div className="mb-3 mt-3 flex">
                             <dt className="text-gray-700 ml-5 font-bold min-w-[19rem]">Ime i prezime</dt>
                             <dt className="text-gray-700 font-bold min-w-[12rem]">Bodovi</dt>
                         </div>
                         )}
+            {isTablet && !isMobile && (
+              <div className="mb-3 mt-3 flex">
+              <dt className="text-gray-700 ml-5 font-bold min-w-[12rem]">Ime i prezime</dt>
+              <dt className="text-gray-700 font-bold min-w-[10rem]">Bodovi</dt>
+              </div>              
+            )}
             {sortedStudents.map((item, index) => (
               <div
                 key={index}
@@ -156,7 +164,7 @@ const ListStudentsPerCourse = ({ courseId }) => {
                 {isMobile && (
                   <div className="mt-0.5 text-sm text-gray-900 flex justify-between items-center">
                     <div>
-                      <dt>Bodovi: {item.total_points}</dt>
+                      <dt className="min-w-[11rem]">Bodovi: {item.total_points}</dt>
                     </div>
                     <Link href={`/home/${courseId}/${item.id}`} passHref>
                       <div
@@ -170,7 +178,7 @@ const ListStudentsPerCourse = ({ courseId }) => {
                 )}
                 {!isMobile && (
                   <div className="mt-1 text-sm text-gray-900 sm:col-span-1 sm:mt-0">
-                    Bodovi: {item.total_points}
+                    {item.total_points}
                   </div>
                 )}
                 {!isMobile && (

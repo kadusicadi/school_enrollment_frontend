@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 
-const useIsMobile = () => {
-  const [isMobile, setIsMobile] = useState(false);
+const useIsMiniMobile = () => {
+  const [isMiniMobile, setIsMiniMobile] = useState(false);
 
   useEffect(() => {
     const handleResize = () => {
-      setIsMobile(window.innerWidth <= 800);
+      setIsMiniMobile(window.innerWidth <= 350);
     };
 
     window.addEventListener('resize', handleResize);
@@ -14,7 +14,7 @@ const useIsMobile = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  return isMobile;
+  return isMiniMobile;
 };
 
-export default useIsMobile;
+export default useIsMiniMobile;

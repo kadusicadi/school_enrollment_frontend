@@ -116,6 +116,14 @@ const ListStudents = () => {
         }
     };
 
+    const filteredAndSortedStudents = filteredStudents.sort((a, b) => {
+        const firstNameA = a.pupil_name.toLowerCase();
+        const firstNameB = b.pupil_name.toLowerCase();
+        if (firstNameA < firstNameB) return -1;
+        if (firstNameA > firstNameB) return 1;
+        return 0;
+    });
+
   return (
     <div>
         <div className="flex flex-col">
@@ -146,7 +154,7 @@ const ListStudents = () => {
                 </select>
                 </div>
             </div>
-            {filteredStudents.length > 0 ? (
+            {filteredAndSortedStudents.length > 0 ? (
                 <div className="border-t border-gray-200 px-4 py-5 sm:p-0">
                     <dl className="sm:divide-y sm:divide-gray-200">
                     <div className="mt-3 mb-3 flex">
@@ -155,7 +163,7 @@ const ListStudents = () => {
                         <dt className="text-gray-700 font-bold min-w-[11rem]">Smjer</dt>
                         <dt className="text-gray-700 font-bold">Telefon</dt>
                     </div>
-                        {filteredStudents.map((item, index) => {
+                        {filteredAndSortedStudents.map((item, index) => {
                             return (
                                 <div
                                     key={index}
@@ -165,13 +173,13 @@ const ListStudents = () => {
                                         {index + 1}. {item.pupil_name} {item.pupil_last_name}
                                     </dt>
                                     <dd className="mt-1 text-sm text-gray-900 sm:col-span-1 sm:mt-0">
-                                        Fali
+                                        {item.pupil_email}
                                     </dd>
                                     <dd className="mt-1 text-sm text-gray-900 sm:col-span-1 sm:mt-0">
                                         {item.pupil_desired_course}
                                     </dd>
                                     <dd className="mt-1 text-sm text-gray-900 sm:col-span-1 sm:mt-0">
-                                        Fali
+                                        {item.pupil_phone_number}
                                     </dd>
                                     {/* Instead of a button we are using a link */}
                                     <Link href={`/user/pupils/${item.pupil_id}/edit`} passHref>
@@ -214,7 +222,7 @@ const ListStudents = () => {
           <span>Učitaj još učenika</span>
         </div>
       ) : (
-        filteredStudents.length > 0 && (
+        filteredAndSortedStudents.length > 0 && (
             <div className="flex justify-center items-center h-10 rounded w-60 cursor-pointer border mt-20 bg-gray-800 text-white">
                 <span>Svi učenici su učitani</span>
             </div>

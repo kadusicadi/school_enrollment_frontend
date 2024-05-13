@@ -4,6 +4,8 @@ import Url from "../../../constants";
 import { PupilLimit } from "../../../constants";
 import Link from "next/link";
 import useIsMobile from "./useIsMobile";
+import useIsTablet from "./useIsTablet";
+import useIsMiniMobile from "./useIsMiniMobile";
 
 const ListStudents = () => {
     const { data } = useSession();
@@ -14,6 +16,8 @@ const ListStudents = () => {
     const [showAllCourses, setShowAllCourses] = useState(false);
     const [selectedStudentIndex, setSelectedStudentIndex] = useState(null);
     const isMobile = useIsMobile();
+    const isTablet = useIsTablet();
+    const isMiniMobile = useIsMiniMobile();
 
     const getStudentPoints = async (name) => {
         try {
@@ -97,11 +101,11 @@ const ListStudents = () => {
                     </div>
                     {studentsData && studentsData.length > 0 && (
                      <div className="mt-3 flex">
-                         <dt className={`${!isMobile ? 'text-gray-700 font-bold ml-10 min-w-[19rem]' : 'text-gray-700 font-bold ml-2 mr-4'} ${isMobile ? 'text-sm' : ''}`}>Ime i prezime</dt>
-                         <dt className={`${!isMobile ? 'text-gray-700 font-bold min-w-[20rem]' : 'text-gray-700 font-bold mr-4'} ${isMobile ? 'text-sm' : ''}`}>Trenutna pozicija</dt>
-                         <dt className={`text-gray-700 font-bold ${isMobile ? 'text-sm' : ''}`}>Smjer</dt>
-                     </div>
-                 )}                 
+                         <dt className={`${!isMobile && !isTablet ? 'text-gray-700 font-bold ml-10 min-w-[17rem]' : isTablet ? 'text-gray-700 font-bold ml-10 min-w-[14rem]' : 'text-gray-700 font-bold ml-2 mr-4'} ${isMobile || isTablet ? 'text-xs' : ''}`}>Ime i prezime</dt>
+                         <dt className={`${!isMobile && !isTablet ? 'text-gray-700 font-bold min-w-[22rem]' : isTablet ? 'text-gray-700 font-bold min-w-[14rem]' : 'text-gray-700 font-bold ml-2 mr-4'} ${isMobile || isTablet ? 'text-xs' : ''}`}>Trenutna pozicija</dt>
+                         <dt className={`text-gray-700 font-bold ${isMobile || isTablet ? 'text-xs' : ''}`}>Smjer</dt>
+                      </div>
+                 )}
                 </div>
                 {error === '' && studentsData && studentsData.map((student, studentIndex) => (
                     <div key={studentIndex} className="rounded-md">
@@ -110,9 +114,8 @@ const ListStudents = () => {
                         .sort((a, b) => b.total_points - a.total_points)
                         .map((course, courseIndex) => (
                             <div key={courseIndex} className={`p-4 my-2 border-2 border-gray-700 ${course.current_position < PupilLimit ? 'bg-green-100' : 'bg-red-100'}`}>
-                                <div className={`flex ${isMobile ? 'items-center' : 'items-start mb-1'}`}>
-                                    
-                                    <div className={`${!isMobile ? 'ml-5 mr-10' : 'mr-9'}`}>
+                                <div className={`flex ${isMobile  && !isTablet ? 'items-center' : isTablet ? 'items-center' : 'items-start mb-1' }`}>
+                                    <div className={`${!isMobile ? 'ml-5 mr-10' : 'mr-4'}`}>
                                         {isMobile && (
                                         <dt className="text-sm font-bold text-gray-900">{`${student.pupil_name}`}</dt>
                                         )}
@@ -123,10 +126,10 @@ const ListStudents = () => {
                                         <dt className="text-md font-bold text-gray-900">{`${student.pupil_name} ${studentsData.filter(s => s.pupil_name === student.pupil_name && s.pupil_last_name === student.pupil_last_name).length > 1 ? ` (${student.pupil_guardian_name})` : ''} ${student.pupil_last_name}`}</dt>
                                         )}
                                     </div>
-                                    <div className={`${!isMobile ? 'text-center ml-20 mr-20 min-w-[11rem]' : ''}`}>
+                                    <div className={`${!isMobile && !isTablet ? 'text-center ml-20 mr-20 min-w-[11rem]' : isTablet ? 'text-center ml-20 min-w-[6rem]' : ''}`}>
                                         <dt className={`text-md font-bold text-gray-900 ${isMobile ? 'ml-5' : ''}`}>{course.current_position}</dt>
                                     </div>
-                                    <div className={`flex-grow text-center ${isMobile ? 'ml-12' : 'ml-14'}`}>
+                                    <div className={`flex-grow text-center ${isMiniMobile ? 'ml-4' : isMobile ? 'ml-12' : 'ml-14'}`}>
                                         <dt className="text-md font-bold text-gray-900">{course.course_code}</dt>
                                     </div>
                                     {isMobile && (
@@ -179,10 +182,10 @@ const ListStudents = () => {
                                             <dt className="text-md text-gray-700 mr-2">{`${student.pupil_name} ${studentsData.filter(s => s.pupil_name === student.pupil_name && s.pupil_last_name === student.pupil_last_name).length > 1 ? ` (${student.pupil_guardian_name})` : ''} ${student.pupil_last_name}`}</dt>
                                             )}
                                         </div>
-                                        <div className={`${!isMobile ? 'text-center ml-20 mr-20 min-w-[11rem]' : 'ml-10 mr-8'}`}>
+                                        <div className={`${!isMobile && !isTablet ? 'text-center ml-20 mr-20 min-w-[11rem]' : isTablet ? 'text-center ml-20 min-w-[6rem]' : ''}`}>
                                             <dt className="text-md text-gray-700">{course.current_position}</dt>
                                         </div>
-                                        <div className={`flex-grow text-center ${isMobile ? 'ml-18' : ''}`}>
+                                        <div className={`flex-grow text-center ${isMiniMobile ? 'ml-4' : isMobile ? 'ml-18' : ''}`}>
                                             <dt className="text-md text-gray-700">{course.course_code}</dt>
                                         </div>
                                         <div className="text-base ml-auto">

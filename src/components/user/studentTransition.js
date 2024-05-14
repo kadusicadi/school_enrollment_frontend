@@ -57,7 +57,8 @@ const StudentTransition = ({ studentId }) => {
                     pupil_id: studentId,
                     school_id: 1,
                     old_course: oldCourse,
-                    new_course: newCourse
+                    new_course: newCourse,
+                    teacher_id: data.user.id 
                 })
             });
             if (resp.ok) {
@@ -72,6 +73,16 @@ const StudentTransition = ({ studentId }) => {
         }
     }
 
+    function formatDatetime(datetime) {
+        const date = new Date(datetime);
+        const formattedDatetime = `${date.getFullYear()}-${padZero(date.getMonth() + 1)}-${padZero(date.getDate())}`;
+        return formattedDatetime;
+    }
+
+    function padZero(num) {
+        return num < 10 ? '0' + num : num;
+    }
+
     return (
         <>
             {/* Table */}
@@ -82,14 +93,16 @@ const StudentTransition = ({ studentId }) => {
                             <tr>
                                 <th className="px-4 py-2 text-left font-bold text-gray-800">Stari smjer</th>
                                 <th className="px-4 py-2 text-left font-bold text-gray-800">Novi smjer</th>
+                                <th className="px-4 py-2 text-left font-bold text-gray-800">Datum</th>
                             </tr>
                         </thead>
                         <tbody>
                             {transitions.length > 0 ? (
                                 transitions.map((transition, index) => (
-                                    <tr key={index}>
+                                    <tr key={index} className={index === transitions.length - 1 ? 'bg-green-100' : ''}>
                                         <td className="border px-4 py-2">{transition.old_course}</td>
-                                        <td className="border px-4 py-2">{transition.new_course}</td>
+                                        <td className={`border px-4 py-2 ${index === transitions.length - 1 ? 'font-bold' : ''}`}>{transition.new_course}</td>
+                                        <td className="border px-4 py-2">{formatDatetime(transition.datetime)}</td>
                                     </tr>
                                 ))
                             ) : (

@@ -141,20 +141,20 @@ const ListStudentsPerCourse = ({ courseId }) => {
           <dl className="sm:divide-y sm:divide-gray-200">
           {!isMobile && !isTablet && (
                         <div className="mb-3 mt-3 flex">
-                            <dt className="text-gray-700 ml-5 font-bold min-w-[19rem]">Ime i prezime</dt>
+                            <dt className="text-gray-700 ml-5 font-bold min-w-[28rem]">Ime i prezime</dt>
                             <dt className="text-gray-700 font-bold min-w-[12rem]">Bodovi</dt>
                         </div>
                         )}
             {isTablet && !isMobile && (
               <div className="mb-3 mt-3 flex">
-              <dt className="text-gray-700 ml-5 font-bold min-w-[12rem]">Ime i prezime</dt>
+              <dt className="text-gray-700 ml-5 font-bold min-w-[22rem]">Ime i prezime</dt>
               <dt className="text-gray-700 font-bold min-w-[10rem]">Bodovi</dt>
-              </div>              
+              </div>
             )}
             {sortedStudents.map((item, index) => (
               <div
                 key={index}
-                className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5 sm:px-6"
+                className="py-4 sm:grid sm:grid-cols-3 sm:gap-44 sm:py-5 sm:px-6"
               >
                 <div className="text-sm font-medium text-gray-500 first-letter:capitalize">
                   <div>
@@ -177,23 +177,16 @@ const ListStudentsPerCourse = ({ courseId }) => {
                   </div>
                 )}
                 {!isMobile && (
-                  <div className="mt-1 text-sm text-gray-900 sm:col-span-1 sm:mt-0">
+                  <div className="mr-20 mt-1 text-sm text-gray-900 sm:col-span-1 sm:mt-0">
                     {item.total_points}
                   </div>
                 )}
                 {!isMobile && (
                   <Link href={`/home/${courseId}/${item.id}`} passHref>
-                    <div
-                      className="mt-1 text-sm text-black bg-gray-300 sm:col-span-1 px-4 py-2 hover:bg-gray-400 rounded-md flex items-center justify-center shadow-lg ml-2"
-                      style={{
-                        alignSelf: "center",
-                        width: "100px",
-                        marginLeft: "60px",
-                      }}
-                    >
-                      Detalji
-                    </div>
-                  </Link>
+                  <div className="mt-1 text-sm text-black bg-gray-300 sm:col-span-1 px-2 py-2 hover:bg-gray-400 rounded-md flex items-center justify-center ml-auto shadow-lg">
+                    Detalji
+                  </div>
+                </Link>
                 )}
               </div>
             ))}

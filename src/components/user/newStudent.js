@@ -7,6 +7,7 @@ const NewStudents = ({ setSelectedPage }) => {
   const { data } = useSession();
   const [school, setSchool] = useState(null);
   const [courses, setCourses] = useState(null);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const {
     register,
@@ -54,6 +55,9 @@ const NewStudents = ({ setSelectedPage }) => {
 
   const onSubmit = async (dataVal) => {
     try {
+      const phoneNumberWithoutSpaces = dataVal.phone_number.replace(/\s+/g, "");
+      const guardianNumberWithoutSpaces = dataVal.guardian_number.replace(/\s+/g, "");
+
       const storeData = {
         primary_school: dataVal.primary_school,
         name: dataVal.name,
@@ -62,14 +66,22 @@ const NewStudents = ({ setSelectedPage }) => {
         gender: dataVal.gender,
         address: dataVal.address,
         guardian_name: dataVal.guardian_name,
-        phone_number: dataVal.phone_number,
-        guardian_number: dataVal.guardian_number,
+        phone_number: phoneNumberWithoutSpaces,
+        guardian_number: guardianNumberWithoutSpaces,
         guardian_email: dataVal.guardian_email,
         email: dataVal.email,
         special_case: dataVal.special_case,
         secondary_shool_id: dataVal.school_id,
         desired_course_A: dataVal.course_id,
       };
+
+      if (phoneNumberWithoutSpaces.length < 8 || phoneNumberWithoutSpaces.length > 13) {
+        return;
+      }
+
+      if (guardianNumberWithoutSpaces.length < 8 || guardianNumberWithoutSpaces.length > 13) {
+        return;
+      }
 
       const store = await fetch(`${Url}api/sec-students/student-list/1/student`, {
         method: "POST",
@@ -79,16 +91,30 @@ const NewStudents = ({ setSelectedPage }) => {
         },
         body: JSON.stringify(storeData),
       });
-      setSelectedPage("listStudents");
+
+      if (store.status !== 200)
+      {
+        setErrorMessage("Došlo je do greške. Pokušajte ponovo.");
+      } else {
+      setSelectedPage("listStudents")
+      }
     } catch (e) {
       console.log(e);
     }
+  };
+
+  const isValidEmail = (value) => {
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+    return emailPattern.test(value);
   };
 
   return (
     <div>
       <div className="flex flex-col">
         <h1 className="text-2xl font-semibold mb-3">Dodavanje novog učenika</h1>
+        {errorMessage && (
+          <p className="text-red-500 italic">{errorMessage}</p>
+        )}
         <form onSubmit={handleSubmit(onSubmit)}>
         {school && (
             <>
@@ -238,14 +264,24 @@ const NewStudents = ({ setSelectedPage }) => {
             Broj telefona učenika
           </label>
           <input
-            className="border rounded w-full py-2 px-3"
-            type="text"
-            placeholder="Unesite broj telefona učenika"
-            defaultValue="+387"
-            {...register("phone_number", { required: "Polje je obavezno!",
-            minLength: { value: 8, message: "Broj telefona mora imati najmanje 8 cifara!" },
-            maxLength: { value: 13, message: "Broj telefona može imati najviše 12 cifara!" } })}
-          />
+          className="border rounded w-full py-2 px-3"
+          type="text"
+          placeholder="Unesite broj telefona učenika"
+          defaultValue="+387"
+          {...register("phone_number", {
+            required: "Polje je obavezno!",
+            validate: {
+              validNumber: (value) => {
+                const phoneNumberWithoutSpaces = value.replace(/\s+/g, "");
+                const isValid = /^\+387\d{6,9}$/.test(phoneNumberWithoutSpaces);
+                if (!isValid) {
+                  return "Broj telefona mora početi sa +387 i mora biti 9-12 karaktera.";
+                }
+                return true;
+              },
+            },
+          })}
+        />
           {errors.phone_number && (
             <p className="text-red-500 italic">
               {errors.phone_number?.message}
@@ -262,9 +298,19 @@ const NewStudents = ({ setSelectedPage }) => {
             type="text"
             placeholder="Unesite broj telefona staratelja"
             defaultValue="+387"
-            {...register("guardian_number", { required: "Polje je obavezno!",
-            minLength: { value: 8, message: "Broj telefona mora imati najmanje 8 cifara!" },
-            maxLength: { value: 13, message: "Broj telefona može imati najviše 12 cifara!" } })}
+            {...register("guardian_number", {
+              required: "Polje je obavezno!",
+              validate: {
+                validNumber: (value) => {
+                  const phoneNumberWithoutSpaces = value.replace(/\s+/g, "");
+                  const isValid = /^\+387\d{6,9}$/.test(phoneNumberWithoutSpaces);
+                  if (!isValid) {
+                    return "Broj telefona mora početi sa +387 i mora biti 9-12 karaktera.";
+                  }
+                  return true;
+                },
+              },
+            })}
           />
           {errors.guardian_number && (
             <p className="text-red-500 italic">
@@ -281,8 +327,15 @@ const NewStudents = ({ setSelectedPage }) => {
             className="border rounded w-full py-2 px-3"
             type="email"
             placeholder="Unesite email staratelja (nije obavezno)"
-            {...register("guardian_email")}
+            {...register("guardian_email", {
+              validate: (value) =>
+              !value || isValidEmail(value) ||
+                "Unesite ispravan e-mail format",
+            })}
           />
+          {errors.guardian_email && (
+            <p className="text-red-500 italic">{errors.guardian_email.message}</p>
+          )}
           <label htmlFor="email" className="block text-sm font-bold mb-2 mt-4">
             E-mail učenika
           </label>
@@ -290,8 +343,15 @@ const NewStudents = ({ setSelectedPage }) => {
             className="border rounded w-full py-2 px-3"
             type="email"
             placeholder="Unesite email učenika (nije obavezno)"
-            {...register("email")}
+            {...register("email", {
+              validate: (value) =>
+              !value || isValidEmail(value) ||
+                "Unesite ispravan e-mail format",
+            })}
           />
+          {errors.email && (
+            <p className="text-red-500 italic">{errors.email.message}</p>
+          )}
           <label
             htmlFor="special_case"
             className="block text-sm font-bold mb-2 mt-4"

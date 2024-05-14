@@ -38,19 +38,16 @@ export default function Layout({ children }) {
                                     </div>
                                     <div className="hidden md:block">
                                         <div className="ml-10 flex items-baseline space-x-4">
-                                            {/* Display navigation links based on the teacher status */}
                                             {status === "authenticated" && (
                                                 <>
                                                     <Link href="/" className={classNames('text-gray-300 hover:bg-gray-700 hover:text-white', 'px-3 py-2 rounded-md text-sm font-medium')}>
                                                         Početna
                                                     </Link>
-                                                    {/* If the teacher is not an admin it displays 'Nastavnik opcije'*/}
                                                     {!isAdmin && (
                                                         <Link href="/user" className={classNames('text-gray-300 hover:bg-gray-700 hover:text-white', 'px-3 py-2 rounded-md text-sm font-medium')}>
                                                             Nastavnik opcije
                                                         </Link>
                                                     )}
-                                                    {/* If the teacher is an admin it displays 'Admin opcije' */}
                                                     {isAdmin && (
                                                         <Link href="/admin" className={classNames('text-gray-300 hover:bg-gray-700 hover:text-white', 'px-3 py-2 rounded-md text-sm font-medium')}>
                                                             Admin opcije
@@ -58,7 +55,6 @@ export default function Layout({ children }) {
                                                     )}
                                                 </>
                                             )}
-                                            {/* Displays only 'Početna' for guests/anonymus users */}
                                             {status !== "authenticated" && (
                                                 <Link href="/" className={classNames('text-gray-300 hover:bg-gray-700 hover:text-white', 'px-3 py-2 rounded-md text-sm font-medium')}>
                                                     Početna
@@ -67,62 +63,15 @@ export default function Layout({ children }) {
                                         </div>
                                     </div>
                                 </div>
-                                <div className="hidden md:block">
-                                    <div className="ml-4 flex items-center md:ml-6">
-                                        {data?.user ? (
-                                            <Menu as="div" className="relative ml-3">
-                                                <div>
-                                                    <Menu.Button className="flex max-w-xs items-center rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
-                                                        <span className="sr-only">Open user menu</span>
-                                                        <span className={classNames('text-gray-300 hover:text-white', 'px-3 py-2 rounded-md text-sm font-medium')}>{data.user.first_name}</span>
-                                                    </Menu.Button>
-                                                </div>
-                                                <Transition
-                                                    as={Fragment}
-                                                    enter="transition ease-out duration-100"
-                                                    enterFrom="transform opacity-0 scale-95"
-                                                    enterTo="transform opacity-100 scale-100"
-                                                    leave="transition ease-in duration-75"
-                                                    leaveFrom="transform opacity-100 scale-100"
-                                                    leaveTo="transform opacity-0 scale-95"
-                                                >
-                                                    <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                                                        <Menu.Item>
-                                                            {({ active }) => (
-                                                                <Link href="/">
-                                                                    <span
-                                                                        className={classNames(
-                                                                            active ? 'bg-gray-100' : '',
-                                                                            'block px-4 py-2 text-sm text-gray-700'
-                                                                        )}
-                                                                    // Now it displays the type of user that is logged in;
-                                                                    >
-                                                                        {data.user.first_name}
-                                                                        {data.user.is_superuser && " (Admin)"}
-                                                                        {!data.user.is_superuser && " (Nastavnik)"}
-                                                                    </span>
-                                                                </Link>
-                                                            )}
-                                                        </Menu.Item>
-                                                        <Menu.Item>
-                                                            {({ active }) => (
-                                                                <div
-                                                                    onClick={() => signOut()}
-                                                                    className="cursor-pointer">
-                                                                    <span
-                                                                        className={classNames(
-                                                                            active ? 'bg-gray-100' : '',
-                                                                            'block px-4 py-2 text-sm text-gray-700'
-                                                                        )}
-                                                                    >
-                                                                        Odjava
-                                                                    </span>
-                                                                </div>
-                                                            )}
-                                                        </Menu.Item>
-                                                    </Menu.Items>
-                                                </Transition>
-                                            </Menu>
+                                <div className="hidden md:block ml-auto">
+                                    <div className="flex items-center space-x-4">
+                                        {status === "authenticated" ? (
+                                            <>
+                                                <span className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">{data?.user?.first_name}{isAdmin ? " (Admin)" : " (Nastavnik)"}</span>
+                                                <button onClick={() => signOut()} className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
+                                                    Log out
+                                                </button>
+                                            </>
                                         ) : (
                                             <div
                                                 onClick={() => signIn()}
@@ -134,21 +83,17 @@ export default function Layout({ children }) {
                                     </div>
                                 </div>
                                 <div className="-mr-2 flex md:hidden">
-                                    {/* Mobile menu button */}
                                     <div className="ml-10 flex items-baseline space-x-4">
-                                        {/* Display navigation links based on the teacher status */}
                                         {status === "authenticated" && (
                                             <>
                                                 <Link href="/" className={classNames('text-gray-300 hover:bg-gray-700 hover:text-white', 'px-3 py-2 rounded-md text-sm font-medium')}>
                                                     Početna
                                                 </Link>
-                                                {/* If the teacher is not an admin it displays 'Nastavnik opcije'*/}
                                                 {!isAdmin && (
                                                     <Link href="/user" className={classNames('text-gray-300 hover:bg-gray-700 hover:text-white', 'px-3 py-2 rounded-md text-sm font-medium')}>
                                                         Nastavnik opcije
                                                     </Link>
                                                 )}
-                                                {/* If the teacher is an admin it displays 'Admin opcije' */}
                                                 {isAdmin && (
                                                     <Link href="/admin" className={classNames('text-gray-300 hover:bg-gray-700 hover:text-white', 'px-3 py-2 rounded-md text-sm font-medium')}>
                                                         Admin opcije
@@ -156,7 +101,6 @@ export default function Layout({ children }) {
                                                 )}
                                             </>
                                         )}
-                                        {/* Displays only 'Početna' for guests/anonymus users */}
                                         {status !== "authenticated" && (
                                             <Link href="/" className={classNames('text-gray-300 hover:bg-gray-700 hover:text-white', 'px-3 py-2 rounded-md text-sm font-medium')}>
                                                 Početna

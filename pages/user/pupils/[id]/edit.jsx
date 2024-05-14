@@ -37,6 +37,13 @@ const EditPage = (props) => {
             <div className="bg-gray-800">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between items-center h-16">
+                        <div className="flex items-center">
+                            <button
+                                className="flex items-center text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium focus:outline-none"
+                                onClick={back}>
+                                <ChevronLeftIcon className="w-5 h-5 mr-1" aria-hidden="true" />
+                            </button>
+                        </div>
                         <div className="flex justify-center flex-1 space-x-4">
                             <button
                                 tabIndex={selectedTab === "editStudent" ? "0" : "-1"}
@@ -80,13 +87,6 @@ const EditPage = (props) => {
                                 onClick={() => setSelectedTab("studentTransition")}
                                 onKeyDown={(e) => handleTabNavigation(e, "studentTransition")}
                             >Tranzicija</button>
-                        </div>
-                        <div className="flex items-center">
-                            <button
-                                className="flex items-center text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium focus:outline-none"
-                                onClick={back}>
-                                <ChevronLeftIcon className="w-5 h-5 mr-1" aria-hidden="true" />
-                            </button>
                         </div>
                     </div>
                 </div>

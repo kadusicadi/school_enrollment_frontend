@@ -39,7 +39,7 @@ const EditStudent = ({ studentId }) => {
 
     const updateStudent = async () => {
         try {
-            const resp = await fetch(`${Url}/api/sec-students/student-list/${editingStudent.id}/`, {
+            const resp = await fetch(`${Url}api/sec-students/student-list/${editingStudent.id}/`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',

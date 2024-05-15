@@ -27,10 +27,10 @@ const StudentTransition = ({ studentId }) => {
                 }
             });
             const transitionData = await transitionResp.json();
-            if (transitionData.transitions) { // Check if transitions exist in the response
-                setTransitions(transitionData.transitions); // Only set the transitions array
+            if (transitionData.transitions) {
+                setTransitions(transitionData.transitions);
             } else {
-                setTransitions([]); // Set transitions to an empty array if not found
+                setTransitions([]);
             }
             setOldCourse(transitionData.desired_student_course);
             if (transitionData.all_courses) {
@@ -73,16 +73,6 @@ const StudentTransition = ({ studentId }) => {
         }
     }
 
-    function formatDatetime(datetime) {
-        const date = new Date(datetime);
-        const formattedDatetime = `${date.getFullYear()}-${padZero(date.getMonth() + 1)}-${padZero(date.getDate())}`;
-        return formattedDatetime;
-    }
-
-    function padZero(num) {
-        return num < 10 ? '0' + num : num;
-    }
-
     return (
         <>
             {/* Table */}
@@ -102,12 +92,12 @@ const StudentTransition = ({ studentId }) => {
                                     <tr key={index} className={index === transitions.length - 1 ? 'bg-green-100' : ''}>
                                         <td className="border px-4 py-2">{transition.old_course}</td>
                                         <td className={`border px-4 py-2 ${index === transitions.length - 1 ? 'font-bold' : ''}`}>{transition.new_course}</td>
-                                        <td className="border px-4 py-2">{formatDatetime(transition.datetime)}</td>
+                                        <td className="border px-4 py-2">{transition.date_of_transition}</td>
                                     </tr>
                                 ))
                             ) : (
                                 <tr>
-                                    <td colSpan="2" className="border px-4 py-2 text-center">Nema izvršene tranzicije!</td>
+                                    <td colSpan="3" className="border px-4 py-2 text-center">Nema izvršene tranzicije!</td>
                                 </tr>
                             )}
                         </tbody>

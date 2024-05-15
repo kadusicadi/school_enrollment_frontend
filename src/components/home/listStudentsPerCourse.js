@@ -4,7 +4,8 @@ import { useRouter } from "next/router";
 import { ChevronLeftIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import useIsMobile from "./useIsMobile";
-import useIsTablet from "./useIsTablet";
+import useIsTablet from "./useIsTablet";7
+import useIsMiniTablet from "./useIsMiniTablet";
 
 var filteredStudents;
 var allStudents;
@@ -19,6 +20,7 @@ const ListStudentsPerCourse = ({ courseId }) => {
   const [totalRecords, setTotalRecord] = useState(0);
   const isMobile = useIsMobile();
   const isTablet = useIsTablet();
+  const isMiniTablet = useIsMiniTablet();
 
   async function getStudents(courseId) {
     try {
@@ -139,7 +141,7 @@ const ListStudentsPerCourse = ({ courseId }) => {
       {sortedStudents.length > 0 ? (
         <div className="border-t border-gray-200 px-4 py-5 sm:p-0">
           <dl className="sm:divide-y sm:divide-gray-200">
-          {!isMobile && !isTablet && (
+          {!isMobile && !isTablet && !isMiniTablet && (
                         <div className="mb-3 mt-3 flex">
                             <dt className="text-gray-700 ml-5 font-bold min-w-[28rem]">Ime i prezime</dt>
                             <dt className="text-gray-700 font-bold min-w-[12rem]">Bodovi</dt>
@@ -148,6 +150,12 @@ const ListStudentsPerCourse = ({ courseId }) => {
             {isTablet && !isMobile && (
               <div className="mb-3 mt-3 flex">
               <dt className="text-gray-700 ml-5 font-bold min-w-[22rem]">Ime i prezime</dt>
+              <dt className="text-gray-700 font-bold min-w-[10rem]">Bodovi</dt>
+              </div>
+            )}
+            {isMiniTablet && !isMobile && !isTablet && (
+              <div className="mb-3 mt-3 flex">
+              <dt className="text-gray-700 ml-5 font-bold min-w-[17rem]">Ime i prezime</dt>
               <dt className="text-gray-700 font-bold min-w-[10rem]">Bodovi</dt>
               </div>
             )}

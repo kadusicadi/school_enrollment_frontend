@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 
-const useIsTablet = () => {
-    const [isTablet, setIsTablet] = useState(false);
+const useIsMiniTablet = () => {
+    const [isMiniTablet, setIsMiniTablet] = useState(false);
 
     useEffect(() => {
         const handleResize = () => {
-            setIsTablet(window.innerWidth >= 920 && window.innerWidth <= 1200);
+            setIsMiniTablet(window.innerWidth > 760 && window.innerWidth < 1200);
         };
 
         window.addEventListener('resize', handleResize);
@@ -14,7 +14,7 @@ const useIsTablet = () => {
         return () => window.removeEventListener('resize', handleResize);
     }, []);
 
-    return isTablet;
+    return isMiniTablet;
 };
 
-export default useIsTablet;
+export default useIsMiniTablet;

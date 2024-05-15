@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useSession } from "next-auth/react";
 import useIsMobile from "./useIsMobile";
 import useIsTablet from "./useIsTablet";
+import useIsMiniTablet from "./useIsMiniTablet";
 
 const ListCoursesHome = () => {
     const { data } = useSession();
@@ -12,6 +13,7 @@ const ListCoursesHome = () => {
     const [error, setError] = useState(null);
     const isMobile = useIsMobile(); // Use custom hook to detect mobile devices
     const isTablet = useIsTablet();
+    const isMiniTablet = useIsMiniTablet();
 
     async function getAllCourses() {
         try {
@@ -42,7 +44,7 @@ const ListCoursesHome = () => {
                 {isMobile && (
                 <h1 className="text-2xl font-semibold mb-3 ml-3">Lista smjerova</h1>
                 )}
-                {!isMobile && !isTablet && (
+                {!isMobile && !isTablet && !isMiniTablet && (
                 <div className="flex">
                     <dt className="text-gray-700 ml-5 font-bold min-w-[37rem]">Smjerovi</dt>
                     <dt className="text-gray-700 ml-5 font-bold">Trajanje</dt>
@@ -50,7 +52,13 @@ const ListCoursesHome = () => {
                 )}
                 {isTablet && !isMobile && (
                     <div className="flex">
-                    <dt className="text-gray-700 ml-5 font-bold min-w-[30rem]">Smjerovi</dt>
+                    <dt className="text-gray-700 ml-5 font-bold min-w-[29rem]">Smjerovi</dt>
+                    <dt className="text-gray-700 ml-5 font-bold">Trajanje</dt>
+                </div>
+                )}
+                {isMiniTablet && !isTablet &&  (
+                    <div className="flex">
+                    <dt className="text-gray-700 ml-5 font-bold min-w-[21rem]">Smjerovi</dt>
                     <dt className="text-gray-700 ml-5 font-bold">Trajanje</dt>
                 </div>
                 )}

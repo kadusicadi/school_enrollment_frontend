@@ -169,7 +169,12 @@ const NewStudents = ({ setSelectedPage }) => {
             className="border rounded w-full py-2 px-3"
             type="text"
             placeholder="Unesite osnovnu školu učenika"
-            {...register("primary_school", { required: "Polje je obavezno!" })}
+            maxLength={50}
+            {...register("primary_school", { required: "Polje je obavezno!",
+            maxLength: { 
+              value: 50, 
+              message: "Naziv škole može imati maksimalno 50 karaktera." 
+            }})}
           />
           {errors.primary_school && (
             <p className="text-red-500 italic">
@@ -183,7 +188,12 @@ const NewStudents = ({ setSelectedPage }) => {
             className="border rounded w-full py-2 px-3"
             type="text"
             placeholder="Unesite ime učenika"
-            {...register("name", { required: "Polje je obavezno!" })}
+            maxLength={30}
+            {...register("name", { required: "Polje je obavezno!",
+            maxLength: { 
+              value: 30, 
+              message: "Ime može imati maksimalno 30 karaktera." 
+            }})}
           />
           {errors.name && (
             <p className="text-red-500 italic">{errors.name?.message}</p>
@@ -195,7 +205,12 @@ const NewStudents = ({ setSelectedPage }) => {
             className="border rounded w-full py-2 px-3"
             type="text"
             placeholder="Unesite srednje ime učenika (nije obavezno)"
-            {...register("middle_name")}
+            maxLength={30}
+            {...register("middle_name", {
+              maxLength: { 
+                value: 30, 
+                message: "Srednje ime može imati maksimalno 30 karaktera." 
+              }})}
           />
           <label
             htmlFor="last_name"
@@ -207,7 +222,12 @@ const NewStudents = ({ setSelectedPage }) => {
             className="border rounded w-full py-2 px-3"
             type="text"
             placeholder="Unesite prezime učenika"
-            {...register("last_name", { required: "Polje je obavezno!" })}
+            maxLength={50}
+            {...register("last_name", { required: "Polje je obavezno!",
+            maxLength: { 
+              value: 50, 
+              message: "Prezime može imati maksimalno 50 karaktera." 
+            }})}
           />
           {errors.last_name && (
             <p className="text-red-500 italic">{errors.last_name?.message}</p>
@@ -235,7 +255,12 @@ const NewStudents = ({ setSelectedPage }) => {
             className="border rounded w-full py-2 px-3"
             type="text"
             placeholder="Unesite adresu stanovanja"
-            {...register("address", { required: "Polje je obavezno!" })}
+            maxLength={60}
+            {...register("address", { required: "Polje je obavezno!",
+            maxLength: { 
+              value: 60, 
+              message: "Adresa može imati maksimalno 60 karaktera." 
+            }})}
           />
           {errors.address && (
             <p className="text-red-500 italic">{errors.address?.message}</p>
@@ -250,7 +275,12 @@ const NewStudents = ({ setSelectedPage }) => {
             className="border rounded w-full py-2 px-3"
             type="text"
             placeholder="Unesite ime staratelja"
-            {...register("guardian_name", { required: "Polje je obavezno!" })}
+            maxLength={30}
+            {...register("guardian_name", { required: "Polje je obavezno!",
+            maxLength: { 
+              value: 30, 
+              message: "Ime staratelja može imati maksimalno 30 karaktera." 
+            }})}
           />
           {errors.guardian_name && (
             <p className="text-red-500 italic">

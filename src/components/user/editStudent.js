@@ -7,6 +7,7 @@ const EditStudent = ({ studentId }) => {
     const { data } = useSession();
     const router = useRouter();
     const [editingStudent, setEditingStudent] = useState(null);
+    const [errors, setErrors] = useState({});
 
     useEffect(() => {
         fetchStudentData();
@@ -16,28 +17,71 @@ const EditStudent = ({ studentId }) => {
         try {
             const resp = await fetch(`${Url}api/sec-students/student-list/${studentId}`, {
                 method: 'GET',
-                /*
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${data.user.token}`,
-                }*/
-            })
+            });
             const studentData = await resp.json();
             setEditingStudent(studentData);
         } catch (error) {
-            console.error('Error fetching teacher data:', error);
+            console.error('Error fetching student data:', error);
         }
     }
 
+    const isValidEmail = (value) => {
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+        return emailPattern.test(value);
+    };
+
     const handleInputChange = (e, fieldName) => {
         const value = e.target.value;
+        let error = '';
+
+        if (fieldName === 'name' || fieldName === 'guardian_name') {
+            if (!value) {
+                error = 'Polje je obavezno!';
+            } 
+        }
+
+        if (fieldName === 'last_name') {
+            if (!value) {
+                error = 'Polje je obavezno!';
+            }
+        }
+
         setEditingStudent(prevState => ({
             ...prevState,
-            [fieldName]: value
+            [fieldName]: value,
+        }));
+
+        setErrors(prevState => ({
+            ...prevState,
+            [fieldName]: error,
         }));
     };
 
     const updateStudent = async () => {
+        const newErrors = {};
+
+        if (!editingStudent.name) {
+            newErrors.name = 'Polje je obavezno!';
+        }
+
+        if (!editingStudent.last_name) {
+            newErrors.last_name = 'Polje je obavezno!';
+        }
+
+        if (editingStudent.email && !isValidEmail(editingStudent.email)) {
+            newErrors.email = 'Neispravna email adresa!';
+        }
+
+        if (!editingStudent.guardian_name) {
+            newErrors.guardian_name = 'Polje je obavezno!';
+        }
+
+        setErrors(newErrors);
+
+        if (Object.keys(newErrors).length > 0) {
+            return;
+        }
+
         try {
             const resp = await fetch(`${Url}api/sec-students/student-list/${editingStudent.id}/`, {
                 method: 'PUT',
@@ -61,7 +105,6 @@ const EditStudent = ({ studentId }) => {
     };
 
     const handleCancel = () => {
-        // When we press cancel it goes to admin page;
         router.back();
     };
 
@@ -74,41 +117,63 @@ const EditStudent = ({ studentId }) => {
                         <div className="mb-1 font-bold text-gray-800">Ime:</div>
                         <input
                             type="text"
+                            placeholder="Unesite ime učenika"
                             value={editingStudent.name}
                             onChange={(e) => handleInputChange(e, 'name')}
+                            required
+                            maxLength={30}
                             className="w-full border border-gray-300 rounded-md mb-2 px-4 py-2"
                         />
+                        {errors.name && (
+                            <p className="text-red-500 italic">{errors.name}</p>
+                        )}
                         <div className="mb-1 mt-1 font-bold text-gray-800">Srednje ime:</div>
                         <input
                             type="text"
-                            placeholder="Srednje ime učenika (nije obavezno)"
+                            placeholder="Unesite srednje ime učenika (nije obavezno)"
                             value={editingStudent?.middle_name || ''}
                             onChange={(e) => handleInputChange(e, 'middle_name')}
+                            maxLength={30}
                             className="w-full border border-gray-300 rounded-md mb-2 px-4 py-2"
                         />
+                        {errors.middle_name && (
+                            <p className="text-red-500 italic">{errors.middle_name}</p>
+                        )}
                         <div className="mb-1 mt-1 font-bold text-gray-800">Prezime:</div>
                         <input
                             type="text"
+                            placeholder="Unesite prezime učenika"
                             value={editingStudent.last_name}
                             onChange={(e) => handleInputChange(e, 'last_name')}
+                            maxLength={50}
                             className="w-full border border-gray-300 rounded-md mb-2 px-4 py-2"
                         />
+                        {errors.last_name && (
+                            <p className="text-red-500 italic">{errors.last_name}</p>
+                        )}
                         <div className="mb-1 mt-1 font-bold text-gray-800">Ime jednog roditelja:</div>
                         <input
-                        type="text"
-                        placeholder="Ime jednog roditelja"
-                        value={editingStudent.guardian_name}
-                        onChange={(e) => handleInputChange(e, 'guardian_name')}
-                        className="w-full border border-gray-300 rounded-md mb-2 px-4 py-2"
+                            type="text"
+                            placeholder="Ime jednog roditelja"
+                            value={editingStudent.guardian_name}
+                            onChange={(e) => handleInputChange(e, 'guardian_name')}
+                            maxLength={30}
+                            className="w-full border border-gray-300 rounded-md mb-2 px-4 py-2"
                         />
+                        {errors.guardian_name && (
+                            <p className="text-red-500 italic">{errors.guardian_name}</p>
+                        )}
                         <div className="mb-1 mt-1 font-bold text-gray-800">Email:</div>
                         <input
                             type="text"
-                            placeholder="Email učenika (nije obavezno)"
+                            placeholder="Unesite email učenika (nije obavezno)"
                             value={editingStudent.email}
                             onChange={(e) => handleInputChange(e, 'email')}
                             className="w-full border border-gray-300 rounded-md mb-2 px-4 py-2"
                         />
+                        {errors.email && (
+                            <p className="text-red-500 italic">{errors.email}</p>
+                        )}
                         <div className="mb-1 mt-1 font-bold text-gray-800">Status:</div>
                             <select
                                 value={editingStudent.special_case}
@@ -128,6 +193,5 @@ const EditStudent = ({ studentId }) => {
         </div>
     );
 };
-
 
 export default EditStudent;

@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import Url from "../../../constants";
 import ConfirmationModal from "../delete/confirmationModal";
 import Link from "next/link";
+import useIsTablet from "../home/useIsTablet";
 
 const ListStudents = () => {
     const { status, data } = useSession();
@@ -16,6 +17,7 @@ const ListStudents = () => {
     const [pageNo, setPageNo] = useState(1);
     const [noPerPage, setNoPerPage] = useState(10);
     const [isStudentsFetched, setIsStudentsFetched] = useState(false);
+    const isTablet = useIsTablet();
 
     // Funkcija za dohvat svih smjerova
     async function getCourses(dataInfo) {
@@ -157,12 +159,22 @@ const ListStudents = () => {
             {filteredAndSortedStudents.length > 0 ? (
                 <div className="border-t border-gray-200 px-4 py-5 sm:p-0">
                     <dl className="sm:divide-y sm:divide-gray-200">
+                    {!isTablet && (
                     <div className="mt-3 mb-3 flex">
                         <dt className="text-gray-700 ml-5 font-bold min-w-[12rem]">Ime i prezime</dt>
-                        <dt className="text-gray-700 font-bold min-w-[7.5rem]">Email</dt>
-                        <dt className="text-gray-700 font-bold min-w-[11rem]">Smjer</dt>
+                        <dt className="text-gray-700 font-bold min-w-[10rem]">Email</dt>
+                        <dt className="text-gray-700 font-bold min-w-[8rem]">Smjer</dt>
                         <dt className="text-gray-700 font-bold">Telefon</dt>
                     </div>
+                    )}
+                    {isTablet && (
+                    <div className="mt-3 mb-3 flex">
+                        <dt className="text-gray-700 ml-5 font-bold min-w-[10rem]">Ime i prezime</dt>
+                        <dt className="text-gray-700 font-bold min-w-[7rem]">Email</dt>
+                        <dt className="text-gray-700 font-bold min-w-[7rem]">Smjer</dt>
+                        <dt className="text-gray-700 font-bold">Telefon</dt>
+                    </div>
+                    )}
                         {filteredAndSortedStudents.map((item, index) => {
                             return (
                                 <div
@@ -175,7 +187,7 @@ const ListStudents = () => {
                                     <dd className="mt-1 text-sm text-gray-900 sm:col-span-1 sm:mt-0">
                                         {item.pupil_email}
                                     </dd>
-                                    <dd className="mt-1 text-sm text-gray-900 sm:col-span-1 sm:mt-0">
+                                    <dd className="mt-1 text-sm text-gray-900 sm:col-span-1 sm:mt-0 ml-10">
                                         {item.pupil_desired_course}
                                     </dd>
                                     <dd className="mt-1 text-sm text-gray-900 sm:col-span-1 sm:mt-0">
@@ -199,7 +211,7 @@ const ListStudents = () => {
                                             setStudentToDelete(item);
                                             setShowDeleteModal(true);
                                         }}
-                                        className="mt-1 text-sm text-white bg-red-500 sm:col-span-1 px-4 py-2 hover:bg-red-600 rounded-md shadow-lg ml-4"
+                                        className={`mt-1 text-sm text-white bg-red-500 sm:col-span-1 px-4 py-2 hover:bg-red-600 rounded-md shadow-lg ${isTablet ? 'ml-12' : 'ml-4'}`}
                                         style={{ alignSelf: "center", width: "100px" }}
                                     >
                                         Izbriši

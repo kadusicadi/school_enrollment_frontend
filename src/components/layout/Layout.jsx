@@ -17,6 +17,12 @@ const userNavigation = [
     { name: 'Sign out', href: '#' },
 ]
 
+const userc = {
+    name: 'Ismet',
+    email: 'i@ismet.ba',
+    imageUrl: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
+}
+
 function classNames(...classes) {
     return classes.filter(Boolean).join(' ')
 }
@@ -86,19 +92,22 @@ export default function Layout({ children }) {
                                     <div className="ml-10 flex items-baseline space-x-4">
                                         {status === "authenticated" && (
                                             <>
-                                                <Link href="/" className={classNames('text-gray-300 hover:bg-gray-700 hover:text-white', 'px-3 py-2 rounded-md text-sm font-medium')}>
+                                                <Link href="/" className={classNames('text-xs text-gray-300 hover:bg-gray-700 hover:text-white', 'px-3 py-2 rounded-md text-sm font-medium')}>
                                                     Početna
                                                 </Link>
                                                 {!isAdmin && (
-                                                    <Link href="/user" className={classNames('text-gray-300 hover:bg-gray-700 hover:text-white', 'px-3 py-2 rounded-md text-sm font-medium')}>
+                                                    <Link href="/user" className={classNames('text-xs text-gray-300 hover:bg-gray-700 hover:text-white', 'px-3 py-2 rounded-md text-sm font-medium')}>
                                                         Nastavnik opcije
                                                     </Link>
                                                 )}
                                                 {isAdmin && (
-                                                    <Link href="/admin" className={classNames('text-gray-300 hover:bg-gray-700 hover:text-white', 'px-3 py-2 rounded-md text-sm font-medium')}>
+                                                    <Link href="/admin" className={classNames('text-xs text-gray-300 hover:bg-gray-700 hover:text-white', 'px-3 py-2 rounded-md text-sm font-medium')}>
                                                         Admin opcije
                                                     </Link>
                                                 )}
+                                                <button onClick={() => signOut()} className="text-xs text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
+                                                    Log out
+                                                </button>
                                             </>
                                         )}
                                         {status !== "authenticated" && (

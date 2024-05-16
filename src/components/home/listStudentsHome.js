@@ -83,7 +83,7 @@ const ListStudents = () => {
     return (
         <div>
             <div className="flex justify-center" style={{ paddingBottom: '40px' }}>
-                <h1 className="text-3xl font-semibold text-center">Dobrodošli na upis učenika u Tehničku školu 2024/2025</h1>
+                <h1 className="text-3xl font-semibold text-center ml-2 mr-2">Dobrodošli na upis učenika u Tehničku školu 2024/2025</h1>
             </div>
             <div className="flex flex-col">
                 <div className="mb-4">

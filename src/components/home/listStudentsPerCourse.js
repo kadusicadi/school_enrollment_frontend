@@ -201,7 +201,7 @@ const ListStudentsPerCourse = ({ courseId }) => {
           </dl>
         </div>
       ) : (
-        <p className="text-red-500 font-bold mt-3">
+        <p className="text-red-500 font-bold mt-3 ml-3">
           Trenutno niko nije upisan.
         </p>
       )}

@@ -30,17 +30,17 @@ const Home = (props) => {
         {/* Here we render tabs for smaller screen sizes (phones); */}
         <div className="sm:hidden flex justify-center gap-5 mb-8">
           <button
-            className={`px-6 py-2 rounded-lg text-white font-semibold ${selectedPage === "listStudentsHome" ? "bg-gray-600" : "bg-gray-500"
+            className={`px-6 ml-2 py-2 rounded-lg text-white font-semibold ${selectedPage === "listCoursesHome" ? "bg-gray-600" : "bg-gray-500"
+              }`}
+            onClick={() => setSelectedPage("listCoursesHome")}
+          >Lista smjerova</button>
+          <button
+            className={`px-6 mr-2 py-2 rounded-lg text-white font-semibold ${selectedPage === "listStudentsHome" ? "bg-gray-600" : "bg-gray-500"
               }`}
             onClick={() => setSelectedPage("listStudentsHome")}
           >
             Prikaz učenika
           </button>
-          <button
-            className={`px-6 py-2 rounded-lg text-white font-semibold ${selectedPage === "listCoursesHome" ? "bg-gray-600" : "bg-gray-500"
-              }`}
-            onClick={() => setSelectedPage("listCoursesHome")}
-          >Lista smjerova</button>
         </div>
 
         {/* This is displayed for normal sized screens (computers, laptops) */}

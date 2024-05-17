@@ -8,7 +8,7 @@ import { signOut, signIn } from "next-auth/react";
 const navigation = [
     { name: 'Početna', href: '/', current: true },
     { name: 'User Panel', href: '/user', current: false },
-    { name: 'Admin Panel', href: '/admin', current: false },
+    { name: 'Admin Panel', href: '/admin/listTeachers', current: false },
 ];
 
 const userNavigation = [
@@ -55,7 +55,7 @@ export default function Layout({ children }) {
                                                         </Link>
                                                     )}
                                                     {isAdmin && (
-                                                        <Link href="/admin" className={classNames('text-gray-300 hover:bg-gray-700 hover:text-white', 'px-3 py-2 rounded-md text-sm font-medium')}>
+                                                        <Link href="/admin/listTeachers" className={classNames('text-gray-300 hover:bg-gray-700 hover:text-white', 'px-3 py-2 rounded-md text-sm font-medium')}>
                                                             Admin opcije
                                                         </Link>
                                                     )}
@@ -101,7 +101,7 @@ export default function Layout({ children }) {
                                                     </Link>
                                                 )}
                                                 {isAdmin && (
-                                                    <Link href="/admin" className={classNames('text-xs text-gray-300 hover:bg-gray-700 hover:text-white', 'px-3 py-2 rounded-md text-sm font-medium')}>
+                                                    <Link href="/admin/listTeachers" className={classNames('text-xs text-gray-300 hover:bg-gray-700 hover:text-white', 'px-3 py-2 rounded-md text-sm font-medium')}>
                                                         Admin opcije
                                                     </Link>
                                                 )}

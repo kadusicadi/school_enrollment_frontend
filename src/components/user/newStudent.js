@@ -40,8 +40,13 @@ const NewStudents = ({ setSelectedPage }) => {
           },
         }
       );
-      const coursesData = await respCourses.json();
-      setCourses(coursesData);
+      if (respCourses.status === 401) {
+        // Handle token expiration or invalid token
+        console.log('Token expired or invalid');
+        return;
+    }
+    const coursesData = await respCourses.json();
+    setCourses(coursesData)
     } catch (e) {
       console.log(e);
     }
@@ -83,7 +88,7 @@ const NewStudents = ({ setSelectedPage }) => {
         return;
       }
 
-      const store = await fetch(`${Url}api/sec-students/student-list/1/student`, {
+      const store = await fetch(`${Url}api/sec-students/student-list/1/student/`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${data.user.token}`,

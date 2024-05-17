@@ -1,5 +1,4 @@
 import { useRouter } from "next/router";
-
 import { toast } from 'react-toastify';
 import Layout from '../src/components/layout/Layout';
 import ListStudents from "../src/components/home/listStudentsHome";
@@ -8,39 +7,58 @@ import SidebarHome from "../src/components/home/sidebarHome";
 import { signIn } from "next-auth/react";
 import { useSession } from "next-auth/react";
 import { useEffect, useState, useContext } from "react";
+import { Bars3Icon } from '@heroicons/react/24/outline';
 
 const Home = (props) => {
-  const [selectedPage, setSelectedPage] = useState("listCoursesHome")
+  const [selectedPage, setSelectedPage] = useState("listCoursesHome");
+  const [dropdownOpen, setDropdownOpen] = useState(false);
 
   useEffect(() => {
-    const a = 2
-    const b = 3
-    const c = 4
+    const a = 2;
+    const b = 3;
+    const c = 4;
     if (a === 2 && (b === 2 || c === 4)) {
-      console.log('true')
+      console.log('true');
     } else {
-      console.log('false')
-
+      console.log('false');
     }
-  })
+  });
+
+  const toggleDropdown = () => {
+    setDropdownOpen(!dropdownOpen);
+  };
+
+  const handlePageSelect = (page) => {
+    setSelectedPage(page);
+    setDropdownOpen(false);
+  };
 
   return (
     <Layout>
       <div className="">
         {/* Here we render tabs for smaller screen sizes (phones); */}
-        <div className="sm:hidden flex justify-center gap-5 mb-8">
-          <button
-            className={`px-6 ml-2 py-2 rounded-lg text-white font-semibold ${selectedPage === "listCoursesHome" ? "bg-gray-600" : "bg-gray-500"
-              }`}
-            onClick={() => setSelectedPage("listCoursesHome")}
-          >Lista smjerova</button>
-          <button
-            className={`px-6 mr-2 py-2 rounded-lg text-white font-semibold ${selectedPage === "listStudentsHome" ? "bg-gray-600" : "bg-gray-500"
-              }`}
-            onClick={() => setSelectedPage("listStudentsHome")}
-          >
-            Prikaz učenika
+        <div className="sm:hidden flex justify-start items-center gap-5 mb-8 relative">
+          <button onClick={toggleDropdown} className="text-gray-700 text-2xl">
+            <Bars3Icon className="ml-5 h-8 w-8" />
           </button>
+          {dropdownOpen && (
+            <div className="absolute top-full mt-2 bg-white border rounded shadow-lg z-10">
+              <button
+                className={`block w-full px-6 py-2 text-left ${selectedPage === "listCoursesHome" ? "bg-gray-600 text-white" : "text-gray-700"
+                  }`}
+                onClick={() => handlePageSelect("listCoursesHome")}
+              >
+                Lista smjerova
+              </button>
+              <button
+                className={`block w-full px-6 py-2 text-left ${selectedPage === "listStudentsHome" ? "bg-gray-600 text-white" : "text-gray-700"
+                  }`}
+                onClick={() => handlePageSelect("listStudentsHome")}
+              >
+                Prikaz učenika
+              </button>
+            </div>
+          )}
         </div>
 
         {/* This is displayed for normal sized screens (computers, laptops) */}

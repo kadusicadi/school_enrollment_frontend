@@ -5,6 +5,7 @@ import GradePage from '../../../../src/components/user/gradePage';
 import { ChevronLeftIcon } from '@heroicons/react/24/outline';
 import StudentAcknowledgments from '../../../../src/components/user/studentAcknowledgments'
 import StudentTransition from '../../../../src/components/user/studentTransition';
+import { useSession } from 'next-auth/react';
 
 
 const EditPage = (props) => {
@@ -12,6 +13,12 @@ const EditPage = (props) => {
     const { id } = router.query;
     const idExists = id !== undefined && id !== null;
     const [selectedTab, setSelectedTab] = useState("editStudent");
+    const { data } = useSession()
+
+    const back = () => {
+        const redirectUrl = data.user.is_superuser ? '/admin/listStudents' : '/user';
+        router.push(redirectUrl);
+    };
 
     // Function to switch tabs;
     const handleTabNavigation = (e, tab) => {
@@ -27,10 +34,6 @@ const EditPage = (props) => {
         }
     };
 
-    // Back to previous page;
-    const back = () => {
-        router.push('/user');
-    };
 
     return (
         <div className="">

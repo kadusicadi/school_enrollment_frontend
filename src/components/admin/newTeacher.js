@@ -29,6 +29,11 @@ const NewTeachers = ({setSelectedPage}) => {
                     'Authorization': `Bearer ${dataInfo.user.token}`
                 }
             })
+            if (respCourses.status === 401) {
+                // Handle token expiration or invalid token
+                console.log('Token expired or invalid');
+                return;
+            }
             const coursesData = await respCourses.json();
             setCourses(coursesData)
         } catch (e) {

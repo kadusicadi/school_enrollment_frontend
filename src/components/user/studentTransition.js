@@ -76,7 +76,7 @@ const StudentTransition = ({ studentId }) => {
     return (
         <>
             {/* Table */}
-            {!showForm && (
+            {!showForm && transitions.length > 0 && (
                 <div className="bg-white p-8 rounded-lg shadow-lg">
                     <table className="w-full">
                         <thead>
@@ -87,24 +87,25 @@ const StudentTransition = ({ studentId }) => {
                             </tr>
                         </thead>
                         <tbody>
-                            {transitions.length > 0 ? (
-                                transitions.map((transition, index) => (
-                                    <tr key={index} className={index === transitions.length - 1 ? 'bg-green-100' : ''}>
-                                        <td className="border px-4 py-2">{transition.old_course}</td>
-                                        <td className={`border px-4 py-2 ${index === transitions.length - 1 ? 'font-bold' : ''}`}>{transition.new_course}</td>
-                                        <td className="border px-4 py-2">{transition.date_of_transition}</td>
-                                    </tr>
-                                ))
-                            ) : (
-                                <tr>
-                                    <td colSpan="3" className="border px-4 py-2 text-center">Nema izvršene tranzicije!</td>
+                            {transitions.map((transition, index) => (
+                                <tr key={index} className={index === transitions.length - 1 ? 'bg-green-100' : ''}>
+                                    <td className="border px-4 py-2">{transition.old_course}</td>
+                                    <td className={`border px-4 py-2 ${index === transitions.length - 1 ? 'font-bold' : ''}`}>{transition.new_course}</td>
+                                    <td className="border px-4 py-2">{transition.date_of_transition}</td>
                                 </tr>
-                            )}
+                            ))}
                         </tbody>
                     </table>
                 </div>
             )}
-    
+
+            {/* Message if there are no transitions */}
+            {!showForm && transitions.length === 0 && (
+                <div className="font-bold bg-green-100 p-8 rounded-lg shadow-lg text-center">
+                    Trenutno nema izvršene tranzicije, trenutni smjer je: {oldCourse}
+                </div>
+            )}
+            
             {/* Button to toggle form */}
             {!showForm && (
                 <div className="flex justify-center">
@@ -113,7 +114,7 @@ const StudentTransition = ({ studentId }) => {
                     </button>
                 </div>
             )}
-    
+
             {/* Form */}
             {showForm && (
                 <div className="flex justify-center items-start h-screen bg-gray-200 bg-opacity-75">

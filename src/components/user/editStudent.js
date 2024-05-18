@@ -2,12 +2,14 @@ import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from 'next/router';
 import Url from "../../../constants";
+import ConfirmationModal from "../delete/confirmationModal";
 
 const EditStudent = ({ studentId }) => {
     const { data } = useSession();
     const router = useRouter();
     const [editingStudent, setEditingStudent] = useState(null);
     const [errors, setErrors] = useState({});
+    const [showConfirmationModal, setShowConfirmationModal] = useState(false);
 
     useEffect(() => {
         fetchStudentData();
@@ -57,31 +59,34 @@ const EditStudent = ({ studentId }) => {
         }));
     };
 
-    const updateStudent = async () => {
+    const handleFormSubmit = async () => {
         const newErrors = {};
-
+    
         if (!editingStudent.name) {
             newErrors.name = 'Polje je obavezno!';
         }
-
+    
         if (!editingStudent.last_name) {
             newErrors.last_name = 'Polje je obavezno!';
         }
-
+    
         if (editingStudent.email && !isValidEmail(editingStudent.email)) {
             newErrors.email = 'Neispravna email adresa!';
         }
-
+    
         if (!editingStudent.guardian_name) {
             newErrors.guardian_name = 'Polje je obavezno!';
         }
-
+    
         setErrors(newErrors);
-
-        if (Object.keys(newErrors).length > 0) {
-            return;
+    
+        if (Object.keys(newErrors).length === 0) {
+            setShowConfirmationModal(true);
         }
-
+    };
+    
+    // Function to handle updating the student
+    const updateStudent = async () => {
         try {
             const resp = await fetch(`${Url}api/sec-students/student-list/${editingStudent.id}/`, {
                 method: 'PUT',
@@ -91,10 +96,8 @@ const EditStudent = ({ studentId }) => {
                 },
                 body: JSON.stringify(editingStudent)
             });
-
             if (resp.ok) {
-                console.log('Student updated successfully');
-                const redirectUrl = data.user.is_superuser ? '/admin' : '/user';
+                const redirectUrl = data.user.is_superuser ? '/admin/listStudents' : '/user';
                 router.push(redirectUrl);
             } else {
                 console.error('Failed to update student');
@@ -184,12 +187,22 @@ const EditStudent = ({ studentId }) => {
                                 <option value="others">Ostali</option>
                             </select>
                         <div className="flex justify-center pt-4">
-                            <button onClick={updateStudent} className="w-40 bg-gray-300 text-gray-700 rounded-md px-4 py-2 hover:bg-gray-400 transition-colors shadow-lg mr-2">Sačuvaj</button>
+                            <button onClick={handleFormSubmit} className="w-40 bg-gray-300 text-gray-700 rounded-md px-4 py-2 hover:bg-gray-400 transition-colors shadow-lg mr-2">Sačuvaj</button>
                             <button onClick={handleCancel} className="w-40 bg-red-500 text-white rounded-md px-4 py-2 hover:bg-red-600 transition-colors shadow-lg ml-2">Otkaži</button>
                         </div>
                     </div>
                 )}
             </div>
+            {showConfirmationModal && (
+                <ConfirmationModal
+                    message={`Da li ste sigurni da želite ažurirati podatke o učeniku?`}
+                    onConfirm={() => {
+                        updateStudent();
+                        setShowConfirmationModal(false);
+                    }}
+                    onCancel={() => setShowConfirmationModal(false)}
+                />
+            )}
         </div>
     );
 };

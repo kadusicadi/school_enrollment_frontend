@@ -1,4 +1,3 @@
-
 import { Fragment } from 'react'
 import Link from 'next/link'
 import { Disclosure, Menu, Transition } from '@headlessui/react'
@@ -31,6 +30,8 @@ function classNames(...classes) {
 export default function Layout({ children }) {
     const { status, data } = useSession();
     const isAdmin = data?.user?.is_superuser;
+
+    const currentYear = new Date().getFullYear();
 
     return (
         <div className="min-h-screen flex flex-col">
@@ -130,7 +131,7 @@ export default function Layout({ children }) {
             </main>
             <footer className="bg-gray-800 text-gray-300 py-4">
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
-                    <p>&copy; 2024 Eacon.</p>
+                    <p>&copy; {currentYear} Eacon.</p>
                 </div>
             </footer>
         </div>

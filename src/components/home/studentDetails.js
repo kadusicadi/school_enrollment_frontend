@@ -24,8 +24,7 @@ const StudentDetails = ({ studentId, courseId }) => {
                 method: 'GET',
             });
             const responseData = await resp.json();
-            console.log('Response:', 
-            responseData);
+            console.log('Response:', responseData);
             if (responseData && responseData[0]) {
                 const data = responseData[0];
 
@@ -108,6 +107,8 @@ const StudentDetails = ({ studentId, courseId }) => {
             return classCode === "VIII" || classCode === "IX";
         });
 
+    const defaultHeaders = specialScoreNames.length === 0 ? ['IX', 'IX', 'IX', 'VIII', 'VIII', 'VIII'] : specialScoreNames;
+
     return (
         <div className="full-w overflow-x-auto">
             <div className='flex'>
@@ -130,18 +131,14 @@ const StudentDetails = ({ studentId, courseId }) => {
                         )}
                     </tr>
                     <tr>
-                        {['Ime i prezime', 'Osnovna škola', ...Object.keys(averageScores || {}), 'SV-I (Opšti kriterij)', ...specialScoreNames, 'SV-II (posebni kriterij)', 'Federalno', 'Kantonalno', 'Općinsko', 'SV-III (specijalni kriterij)', 'Ukupno'].map(header => (
+                        {['Ime i prezime', 'Osnovna škola', ...Object.keys(averageScores || {}), 'SV-I (Opšti kriterij)', ...defaultHeaders, 'SV-II (posebni kriterij)', 'Federalno', 'Kantonalno', 'Općinsko', 'SV-III (specijalni kriterij)', 'Ukupno'].map(header => (
                             <th key={header} scope="col" className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider border-r border-gray-200">{header}</th>
                         ))}
                     </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
                     <tr>
-                        {[`${student?.name} ${student?.last_name}`, student?.primary_school, ...(Object.values(averageScores || {})), sv, ...Object.values(specialScores || {})
-                            .filter((score, index) => {
-                                const classCode = Object.keys(specialScores || {})[index]?.split(" ")[0];
-                                return classCode === "VIII" || classCode === "IX";
-                            }), sv2, ...(Object.values(acknowledgmentPoints || {})), sv3, total].map((value, index) => (
+                        {[`${student?.name} ${student?.last_name}`, student?.primary_school, ...(Object.values(averageScores || {})), sv, ...defaultHeaders.map(header => specialScores?.[header] || 0), sv2, ...(Object.values(acknowledgmentPoints || {})), sv3, total].map((value, index) => (
                                 <td key={index} className="px-6 py-4 text-center whitespace-nowrap border-r border-gray-200">{value}</td>
                             ))}
                     </tr>

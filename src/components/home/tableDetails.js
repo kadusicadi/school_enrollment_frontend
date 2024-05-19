@@ -252,14 +252,9 @@ const TableDetails = ({ courseId }) => {
                 student?.primary_school,
                 ...Object.values(student?.averageScores || {}),
                 student?.sv,
-                ...Object.values(student?.specialScores || {}).filter(
-                  (score, index) => {
-                    const classCode = Object.keys(student?.specialScores || {})[
-                      index
-                    ]?.split(" ")[0];
-                    return classCode === "VIII" || classCode === "IX";
-                  }
-                ),
+                ...specialScoreNames.map((scoreName) => (
+                  student?.specialScores?.[scoreName] || 0
+                )),
                 student?.sv2,
                 ...Object.values(student?.acknowledgmentPoints || {}),
                 student?.sv3,

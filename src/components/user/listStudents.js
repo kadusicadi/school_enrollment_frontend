@@ -167,45 +167,52 @@ const ListStudents = () => {
                         <dl className="sm:divide-y sm:divide-gray-200">
                             {!isTablet && (
                                 <div className="mt-3 mb-3 flex">
-                                    <dt className="text-gray-700 ml-5 font-bold min-w-[12rem]">Ime i prezime</dt>
-                                    <dt className="text-gray-700 font-bold min-w-[10rem]">Email</dt>
-                                    <dt className="text-gray-700 font-bold min-w-[8rem]">Smjer</dt>
-                                    <dt className="text-gray-700 font-bold">Telefon</dt>
+                                    <dt className="text-gray-700 ml-5 font-bold min-w-[11rem]">Ime i prezime</dt>
+                                    <dt className="text-gray-700 font-bold min-w-[8rem]">Email</dt>
+                                    <dt className="text-gray-700 font-bold min-w-[9rem]">Smjer</dt>
+                                    <dt className="text-gray-700 font-bold min-w-[9rem]">Telefon</dt>
+                                    <dt className="text-gray-700 font-bold">Datum upisa</dt>
                                 </div>
                             )}
                             {isTablet && (
                                 <div className="mt-3 mb-3 flex">
                                     <dt className="text-gray-700 ml-5 font-bold min-w-[10rem]">Ime i prezime</dt>
-                                    <dt className="text-gray-700 font-bold min-w-[7rem]">Email</dt>
-                                    <dt className="text-gray-700 font-bold min-w-[7rem]">Smjer</dt>
-                                    <dt className="text-gray-700 font-bold">Telefon</dt>
+                                    <dt className="text-gray-700 font-bold min-w-[6rem]">Email</dt>
+                                    <dt className="text-gray-700 font-bold min-w-[6rem]">Smjer</dt>
+                                    <dt className="text-gray-700 font-bold min-w-[6rem]">Telefon</dt>
+                                    <dt className="text-gray-700 font-bold">Datum upisa</dt>
                                 </div>
                             )}
                             {filteredStudents.map((item, index) => {
                                 return (
                                     <div
                                         key={item.id}
-                                        className="py-4 sm:grid sm:grid-cols-6 sm:gap-4 sm:py-5 sm:px-6"
+                                        className="py-4 sm:grid sm:grid-cols-7 sm:gap-6 sm:py-5 sm:px-6"
                                     >
-                                        <dt className="text-sm font-medium text-gray-500 first-letter:capitalize">
+                                        <dt className="sm:col-span-1 text-sm font-medium text-gray-500 first-letter:capitalize sm:mt-2">
                                             {startIndex + index + 1}. {item.name} {item.last_name}
                                         </dt>
-                                        <dd className="mt-1 text-sm text-gray-900 sm:col-span-1 sm:mt-0">
+                                        <dd className="text-sm text-gray-900 sm:col-span-1 sm:mt-2">
                                             {item.email}
                                         </dd>
-                                        <dd className="mt-1 text-sm text-gray-900 sm:col-span-1 sm:mt-0 ml-10">
+                                        <dd className="text-sm text-gray-900 sm:col-span-1 sm:mt-2 ml-10">
                                             {item.desired_course_A}
                                         </dd>
-                                        <dd className="mt-1 text-sm text-gray-900 sm:col-span-1 sm:mt-0">
+                                        <dd className="text-sm text-gray-900 sm:col-span-1 sm:mt-2 ml-2">
                                             {item.phone_number}
                                         </dd>
+                                        <dd className={`text-sm text-gray-900 sm:col-span-1 sm:mt-2 ${isTablet ? "sm:ml-3" : "sm:ml-10"}`}>
+                                            {item.date_of_enrollment}
+                                        </dd>
+                                        <div className="flex items-center">
                                         <Link href={`/user/pupils/${item.id}/edit`} passHref>
                                             <div
                                                 className="mt-1 text-sm text-black bg-gray-300 sm:col-span-1 px-4 py-2 hover:bg-gray-400 rounded-md flex items-center justify-center shadow-lg ml-2"
                                                 style={{
                                                     alignSelf: "center",
-                                                    width: "100px",
-                                                    marginLeft: "60px",
+                                                    width: "80px",
+                                                    minWidth: "70px",
+                                                    marginLeft: "40px",
                                                 }}
                                             >
                                                 Uredi
@@ -216,11 +223,12 @@ const ListStudents = () => {
                                                 setStudentToDelete(item);
                                                 setShowDeleteModal(true);
                                             }}
-                                            className={`mt-1 text-sm text-white bg-red-500 sm:col-span-1 px-4 py-2 hover:bg-red-600 rounded-md shadow-lg ${isTablet ? 'ml-12' : 'ml-4'}`}
-                                            style={{ alignSelf: "center", width: "100px" }}
+                                            className={`mt-1 text-sm text-white bg-red-500 sm:col-span-1 px-4 py-2 hover:bg-red-600 rounded-md shadow-lg ${isTablet ? 'ml-8' : 'ml-4'}`}
+                                            style={{ alignSelf: "center", width: "70px", minWidth: "80px" }}
                                         >
                                             Izbriši
                                         </button>
+                                    </div>
                                     </div>
                                 );
                             })}

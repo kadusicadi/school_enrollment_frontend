@@ -63,7 +63,7 @@ const ListTeachers = () => {
                 {!isTablet && (
                     <div className="mt-3 mb-3 flex">
                         <dt className="text-gray-700 ml-5 font-bold min-w-[12rem]">Ime i prezime</dt>
-                        <dt className="text-gray-700 font-bold min-w-[14rem]">Email</dt>
+                        <dt className="text-gray-700 font-bold min-w-[15rem]">Email</dt>
                         <dt className="text-gray-700 font-bold">Škola</dt>
                     </div>
                     )}

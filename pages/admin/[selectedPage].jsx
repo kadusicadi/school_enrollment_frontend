@@ -21,13 +21,13 @@ const Admin = () => {
   return (
     <Layout>
       <div className="flex mt-6 gap-5">
-        <div className="w-1/5 border-r">
+        <div className="w-1/6 border-r">
           <Sidebar
             selectedPage={selectedPage}
             setSelectedPage={setSelectedPage}
           />
         </div>
-        <div className="w-4/5">
+        <div className="w-5/6">
           {selectedPage === "listTeachers" && <ListTeachers />}
           {selectedPage === "newTeacher" && <NewTeacher setSelectedPage={setSelectedPage} />}
           {selectedPage === "listStudents" && <ListStudents setSelectedPage={setSelectedPage} />}

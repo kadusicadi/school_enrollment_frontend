@@ -107,8 +107,15 @@ const StudentDetails = ({ studentId, courseId }) => {
             return classCode === "VIII" || classCode === "IX";
         });
 
-    const defaultHeaders = specialScoreNames.length === 0 ? ['IX', 'IX', 'IX', 'VIII', 'VIII', 'VIII'] : specialScoreNames;
-
+        const defaultHeaders =
+        !specialScoreNames.length === 0 && !specialScoreNames === 3
+          ? specialScoreNames
+          : specialScoreNames.length === 0
+          ? ['IX-1', 'IX-2', 'IX-3', 'VIII-1', 'VIII-2', 'VIII-3']
+          : specialScoreNames.length === 3
+          ? [...specialScoreNames, 'IX/VIII-1', 'IX/VIII-2', 'IX/VIII-3']
+          : specialScoreNames;
+      
     return (
         <div className="full-w overflow-x-auto">
             <div className='flex'>

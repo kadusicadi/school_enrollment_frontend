@@ -8,6 +8,7 @@ const NewStudents = ({ setSelectedPage }) => {
   const [school, setSchool] = useState(null);
   const [courses, setCourses] = useState(null);
   const [errorMessage, setErrorMessage] = useState("");
+  const [successPopup, setSuccessPopup] = useState(false);
 
   const {
     register,
@@ -101,7 +102,7 @@ const NewStudents = ({ setSelectedPage }) => {
       {
         setErrorMessage("Došlo je do greške. Pokušajte ponovo.");
       } else {
-      setSelectedPage("listStudents")
+      setSuccessPopup(true);
       }
     } catch (e) {
       console.log(e);
@@ -406,6 +407,22 @@ const NewStudents = ({ setSelectedPage }) => {
               {errors.special_case?.message}
             </p>
           )}
+          {successPopup && (
+  <div className="fixed inset-0 flex items-center justify-center z-10 bg-gray-200 bg-opacity-50 backdrop-filter backdrop-blur-sm">
+    <div className="bg-white p-8 rounded shadow-lg">
+      <p className="font-bold text-green-800 text-lg">Uspješno ste dodali učenika!</p>
+      <button
+        onClick={() => {
+          setSuccessPopup(false);
+          setSelectedPage("listStudents");
+        }}
+        className="ml-20 font-bold mt-4 mx-auto bg-gray-300 hover:bg-gray-400 text-gray-700 py-2 px-4 rounded shadow"
+      >
+        Zatvori
+      </button>
+    </div>
+  </div>
+)}
           <input
             type="submit"
             value="Prijava"

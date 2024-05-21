@@ -27,6 +27,8 @@ RUN yarn build
 # 3. Runner
 FROM node:18-alpine as runner
 WORKDIR /app
+# Remove .env file since it will be used to override docker settings
+# RUN rm /app/.env
 ENV NODE_ENV $node_env
 
 RUN adduser --system --uid 1001 nextjs

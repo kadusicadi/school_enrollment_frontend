@@ -10,6 +10,8 @@ export const authOptions = {
       credentials: {},
       async authorize(credentials, req) {
         const { email, password } = credentials;
+        console.log("Poslao: " + email + " pass: " + password)
+        try{
         const res = await fetch(`${Url}api/teachers/login/`, {
           method: "POST",
           headers: {
@@ -20,11 +22,21 @@ export const authOptions = {
             password,
           }),
         });
-
+      }catch (error) {
+        console.log("Errorr ---")
+        console.error(error);
+        console.dir(process.env);
+      }
+      try{
         const response = await res.json();
         const jwt = response.access;
+        console.log("Dobio: " + jwt)
         const { user_id } = parseJwt(jwt)
         let user = {};
+      } catch(e){
+        console.log("Error response")
+        console.log(e)
+      }
 
         try {
           const userResp = await fetch(`${Url}api/teachers/teacher/` + user_id + `/`, {

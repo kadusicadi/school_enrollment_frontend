@@ -26,7 +26,8 @@ const Signin = () => {
                 setSuccessMessage('Prijava uspješna!');
                 setErrorMessage(''); // Clear any previous error message
                 // If the user exists it routes us to the desired page;
-                window.location.href = '/';
+                console.log("Greska" + res.error)
+                // window.location.href = '/';
             } else {
                 // Else we will get an error message;
                 setErrorMessage('Pogrešan mail ili šifra!');

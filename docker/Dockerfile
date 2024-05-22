@@ -44,4 +44,7 @@ COPY --from=builder /app/public ./standalone/public
 # .next/static to standalone/.next/static and to copy the public folder to standalone/public.
 
 USER nextjs
-CMD ["node","server.js"]
+EXPOSE 3000
+ENV PORT 3000
+CMD HOSTNAME="0.0.0.0" node server.js
+# CMD ["node", "server.js"]

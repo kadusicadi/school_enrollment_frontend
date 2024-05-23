@@ -10,17 +10,20 @@ export const authOptions = {
       credentials: {},
       async authorize(credentials, req) {
         const { email, password } = credentials;
-        const res = await fetch(`${Url}api/teachers/login/`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            email,
-            password,
-          }),
-        });
-
+        try {
+          const res = await fetch(`${Url}api/teachers/login/`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              email,
+              password,
+            }),
+          });
+        } catch (e) {
+          console.log(e)
+        }
         const response = await res.json();
         const jwt = response.access;
         const { user_id } = parseJwt(jwt)

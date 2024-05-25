@@ -2,7 +2,7 @@
 # docker-compose down --remove-orphans && docker image rm myenrollment:latest &&docker image prune && docker-compose up --build --force-recreate
 services:
   frontend_app:
-    image: myenrollment:latest
+    image: frontend_myenrollment:latest
     build:
       context: ../
       args:

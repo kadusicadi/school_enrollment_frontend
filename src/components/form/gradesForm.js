@@ -14,9 +14,14 @@ const GradeForm = ({ onSubmit, onDelete, classId, subjects, pupilId, existingSco
   
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
+  const [showExcellentGradesModal, setExcellentGradesModal] = useState(false);
 
   const showDeleteForm = () => {
     setShowDeleteModal(true);
+  }
+
+  const showExcellentGradesForm = () => {
+    setExcellentGradesModal(true);
   }
 
   const handleDelete = () => {
@@ -94,6 +99,14 @@ const GradeForm = ({ onSubmit, onDelete, classId, subjects, pupilId, existingSco
       localStorage.setItem(`${classId}-${fieldName}-${pupilId}`, value);
   };
 
+  const setGradesExcellentStudent = () => {
+    subjects.forEach(subject => {
+      setValue(subject, '5');
+      saveGradeToLocalStorage(subject, '5');
+      clearErrors(subject);
+    })
+  };
+
   return (
     <div className="flex justify-center items-start min-h-screen bg-gray-100 bg-opacity-100">
       <div className="bg-white p-8 rounded-lg shadow-lg mt-12 mb-12 w-full max-w-3xl">
@@ -143,6 +156,12 @@ const GradeForm = ({ onSubmit, onDelete, classId, subjects, pupilId, existingSco
                         onClick={handleFormSubmit}
                         className="w-full md:w-40 bg-gray-300 text-gray-700 rounded-md px-4 py-2 hover:bg-gray-400 transition-colors shadow-lg"
                       />
+                      <button
+                        type="button"
+                        onClick={showExcellentGradesForm}
+                        className="ml-2 w-full md:w-40 bg-blue-500 text-white rounded-md px-4 py-2 hover:bg-blue-600 transition-colors shadow-lg">
+                        Postavi sve ocjene na 5
+                      </button>
                       {existingScores.length > 0 && (
                       <button
                       type="button"
@@ -174,6 +193,16 @@ const GradeForm = ({ onSubmit, onDelete, classId, subjects, pupilId, existingSco
             setShowConfirmationModal(false);
           }}
           onCancel={() => setShowConfirmationModal(false)}
+        />
+      )}
+      {showExcellentGradesModal && (
+        <ConfirmationModal
+          message={`Da li ste sigurni da želite postaviti sve ocjene na 5 za ${classId} razred?`}
+          onConfirm={() => {
+            setGradesExcellentStudent();
+            setExcellentGradesModal(false);
+          }}
+          onCancel={() => setExcellentGradesModal(false)}
         />
       )}
       </div>
